@@ -5,9 +5,6 @@ import { useCart } from '../context/CartContext'
 const ProductCard = ({ product }) => {
   const { addToCart } = useCart()
   const rating = product.rating || 4.5
-  const discount = product.oldPrice
-    ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)
-    : null
 
   return (
     <article className="product-card amazon-product-card">
@@ -31,7 +28,6 @@ const ProductCard = ({ product }) => {
 
           <div className="product-card-pricing">
             <span className="product-card-current">GHc {product.price.toFixed(2)}</span>
-            {discount ? <span className="product-card-discount">{discount}%</span> : null}
             {product.oldPrice ? <span className="price-old">GHc {product.oldPrice.toFixed(2)}</span> : null}
           </div>
         </div>

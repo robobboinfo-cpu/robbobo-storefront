@@ -1887,7 +1887,7 @@ img {
 .amazon-product-media {
   aspect-ratio: 1 / 1;
   background: #f4f5f7;
-  padding: 18px;
+  padding: 6px;
   border-radius: 11px 11px 0 0;
 }
 
@@ -1959,7 +1959,6 @@ img {
 }
 
 .product-card-current { color: var(--alibaba-orange-strong); font-size: 0.92rem; font-weight: 900; }
-.product-card-discount { padding: 3px 5px; border-radius: 3px; background: #edf0f3; color: #475467; font-size: 0.58rem; font-weight: 800; }
 .product-card-pricing .price-old { margin-left: auto; font-size: 0.62rem; }
 
 .product-card-add {
@@ -3408,9 +3407,9 @@ body {
 
   .amazon-product-media {
     width: 100%;
-    height: clamp(200px, 62vw, 280px);
-    aspect-ratio: auto;
-    padding: 10px;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    padding: 4px;
   }
 
   .amazon-product-media img {
