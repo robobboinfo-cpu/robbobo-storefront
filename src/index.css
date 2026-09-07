@@ -1438,6 +1438,108 @@ img {
   justify-content: space-between;
 }
 
+.checkout-payment-methods {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  margin: 0;
+}
+
+.checkout-payment-methods legend {
+  width: 100%;
+  margin: 0 0 12px;
+  padding: 0;
+  color: var(--alibaba-ink);
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.checkout-payment-option {
+  display: grid;
+  grid-template-columns: 20px 42px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  min-width: 0;
+  padding: 15px;
+  border: 1px solid var(--alibaba-line);
+  border-radius: 12px;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
+}
+
+.checkout-payment-option:hover {
+  border-color: var(--alibaba-orange-strong);
+  background: #fffaf2;
+}
+
+.checkout-payment-option.active {
+  border-color: var(--alibaba-orange-strong);
+  background: #fff7e8;
+  box-shadow: 0 0 0 2px rgba(255, 153, 0, 0.12);
+}
+
+.checkout-payment-methods input[type='radio'] {
+  width: 18px;
+  height: 18px;
+  margin: 1px 0 0;
+  accent-color: var(--alibaba-orange-strong);
+}
+
+.checkout-payment-copy {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.checkout-payment-icon {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border-radius: 10px;
+  background: var(--alibaba-surface-alt);
+  color: var(--alibaba-navy);
+}
+
+.checkout-payment-option.active .checkout-payment-icon {
+  background: var(--alibaba-orange);
+  color: #fff;
+}
+
+.checkout-payment-methods strong {
+  color: var(--alibaba-ink);
+  line-height: 1.25;
+}
+
+.checkout-payment-methods small {
+  color: var(--alibaba-muted);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+@media (max-width: 390px) {
+  .checkout-payment-option {
+    grid-template-columns: 20px 36px minmax(0, 1fr);
+    gap: 9px;
+    padding: 12px 10px;
+  }
+
+  .checkout-payment-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .checkout-payment-methods small {
+    font-size: 0.76rem;
+  }
+}
+
+.checkout-payment-methods input[type='radio']:focus-visible {
+  outline: 3px solid rgba(255, 153, 0, 0.3);
+  outline-offset: 2px;
+}
+
 .amazon-home {
   background: #eaeded;
 }

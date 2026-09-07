@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useRef } from 'react'
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 import PaystackPop from '@paystack/inline-js'
+import { Banknote, CreditCard } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { saveLocalOrder } from '../lib/localOrderStore'
 import { useCart } from '../context/CartContext'
@@ -336,17 +337,19 @@ const Checkout = () => {
               </div>
             </div>
 
-            <div className="summary-card checkout-payment-methods">
-              <h3>Payment method</h3>
-              <label className={paymentMethod === 'paystack' ? 'active' : ''}>
+            <fieldset className="summary-card checkout-payment-methods">
+              <legend>Payment method</legend>
+              <label className={`checkout-payment-option ${paymentMethod === 'paystack' ? 'active' : ''}`}>
                 <input type="radio" name="paymentMethod" value="paystack" checked={paymentMethod === 'paystack'} onChange={(event) => setPaymentMethod(event.target.value)} />
-                <span><strong>Paystack</strong><small>Card, mobile money, bank and other available methods</small></span>
+                <span className="checkout-payment-icon"><CreditCard size={20} /></span>
+                <span className="checkout-payment-copy"><strong>Paystack</strong><small>Card, mobile money, bank and other available methods</small></span>
               </label>
-              <label className={paymentMethod === 'cash_on_delivery' ? 'active' : ''}>
+              <label className={`checkout-payment-option ${paymentMethod === 'cash_on_delivery' ? 'active' : ''}`}>
                 <input type="radio" name="paymentMethod" value="cash_on_delivery" checked={paymentMethod === 'cash_on_delivery'} onChange={(event) => setPaymentMethod(event.target.value)} />
-                <span><strong>Cash on delivery</strong><small>Pay when your order arrives</small></span>
+                <span className="checkout-payment-icon"><Banknote size={20} /></span>
+                <span className="checkout-payment-copy"><strong>Cash on delivery</strong><small>Pay when your order arrives</small></span>
               </label>
-            </div>
+            </fieldset>
             <button type="button" className="btn-secondary" style={{ width: '100%', padding: '14px', fontSize: '1rem', borderRadius: 8 }} onClick={placeOrder} disabled={placingOrder}>
               {placingOrder ? (paymentMethod === 'paystack' ? 'Connecting to Paystack...' : 'Placing order...') : (paymentMethod === 'paystack' ? `Pay GHc${total.toFixed(2)} with Paystack` : 'Place order')}
             </button>
