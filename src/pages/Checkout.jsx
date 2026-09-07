@@ -257,7 +257,7 @@ const Checkout = () => {
             ) : null}
             <div className="stack-row" style={{ justifyContent: 'center', marginTop: 18 }}>
               {currentUser ? <button type="button" className="btn-primary" onClick={() => navigate('/account')}>View my orders</button> : <button type="button" className="btn-primary" onClick={() => navigate('/products')}>Continue shopping</button>}
-              <button type="button" className="btn-ghost" onClick={() => navigate('/track')}>Track order</button>
+              {/* <button type="button" className="btn-ghost" onClick={() => navigate('/track')}>Track order</button> */}
             </div>
           </div>
         </div>
@@ -338,7 +338,7 @@ const Checkout = () => {
             </div>
 
             <fieldset className="summary-card checkout-payment-methods">
-              <legend>Payment method</legend>
+              <h2>Payment method</h2>
               <label className={`checkout-payment-option ${paymentMethod === 'paystack' ? 'active' : ''}`}>
                 <input type="radio" name="paymentMethod" value="paystack" checked={paymentMethod === 'paystack'} onChange={(event) => setPaymentMethod(event.target.value)} />
                 <span className="checkout-payment-icon"><CreditCard size={20} /></span>
