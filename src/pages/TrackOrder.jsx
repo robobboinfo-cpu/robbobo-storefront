@@ -9,7 +9,7 @@ const TRACK_STEPS = [
   { key: 'placed', label: 'Order Placed', offsetHours: 0, detail: 'We received your order and started verification.' },
   { key: 'processing', label: 'Processing', offsetHours: 6, detail: 'Your order is being reviewed and prepared.' },
   { key: 'packed', label: 'Packed', offsetHours: 24, detail: 'Your items are packed and ready for dispatch.' },
-  { key: 'shipped', label: 'Shipped', offsetHours: 48, detail: 'The parcel has left the Robbobo fulfillment point.' },
+  { key: 'shipped', label: 'Shipped', offsetHours: 48, detail: 'The parcel has left the Robobbo fulfillment point.' },
   { key: 'out_for_delivery', label: 'Out for Delivery', offsetHours: 96, detail: 'The courier is on the final delivery route.' },
   { key: 'delivered', label: 'Delivered', offsetHours: 120, detail: 'The order has been delivered successfully.' },
 ]

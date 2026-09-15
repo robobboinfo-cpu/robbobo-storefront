@@ -40,7 +40,7 @@ const Navbar = () => {
       {/* Top Bar */}
       <div className="bg-gray-900 text-gray-400 text-xs py-2">
         <div className="max-w-7xl mx-auto px-4 flex justify-between items-center">
-          <span>Welcome to <span className="text-white font-medium">Robbobo</span> — Global Trade Marketplace</span>
+          <span>Welcome to <span className="text-white font-medium">Robobbo</span> — Global Trade Marketplace</span>
           <div className="hidden md:flex items-center gap-4">
             {currentUser ? (
               <span>Hi, <span className="text-white">{currentUser.name}</span></span>
@@ -59,7 +59,7 @@ const Navbar = () => {
       <div className="border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-6">
           <Link to="/" className="flex-shrink-0">
-            <span className="text-xl font-extrabold tracking-tight text-gray-900">ROBBOBO</span>
+            <span className="text-xl font-extrabold tracking-tight text-gray-900">ROBOBBO</span>
           </Link>
 
           <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-xl">

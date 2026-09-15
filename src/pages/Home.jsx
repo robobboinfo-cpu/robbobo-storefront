@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { ArrowRight, Heart, ShoppingCart, Star } from 'lucide-react'
+import { Link, useNavigate } from 'react-router-dom'
+import { ArrowRight, ChevronLeft, ChevronRight, Heart, ShoppingCart, Star } from 'lucide-react'
 import { useCart } from '../context/CartContext'
 import { useSiteContent } from '../context/SiteContentContext'
 import { useProducts } from '../context/ProductContext'
@@ -10,7 +10,7 @@ const categoryImageFallback = 'https://images.unsplash.com/photo-1534438327276-1
 
 const normalizeBanner = (banner, fallbackImage) => ({
   id: banner.id,
-  title: banner.title || 'Shop Robbobo',
+  title: banner.title || 'Shop Robobbo',
   subtitle: banner.subtitle || '',
   image: banner.image_url || fallbackImage,
   buttonText: banner.button_text || 'Shop now',
@@ -55,35 +55,18 @@ const Home = () => {
 
   const safeActiveSlide = heroSlides.length ? activeSlide % heroSlides.length : 0
   const active = heroSlides[safeActiveSlide]
-  const heroTitleWords = String(active?.title || '').trim().split(/\s+/)
-  const heroAccentWord = heroTitleWords.pop() || ''
-  const heroTitleLead = heroTitleWords.join(' ')
   const newArrivals = useMemo(() => [...products].reverse().slice(0, 6), [products])
   const bestSellers = useMemo(() => [...products].sort((a, b) => (b.reviews || 0) - (a.reviews || 0)).slice(0, 3), [products])
-
-  const handleHeroAction = () => {
-    if (!active?.targetUrl) return
-    if (/^https?:\/\//i.test(active.targetUrl)) {
-      window.location.href = active.targetUrl
-      return
-    }
-    navigate(active.targetUrl)
-  }
 
   return (
     <div className="amazon-home page-section">
       <section className="amazon-home-hero-shell">
-        <div className="page-shell amazon-home-hero-inner">
-          <button type="button" className="amazon-hero-arrow left" onClick={() => setActiveSlide((c) => (c - 1 + heroSlides.length) % heroSlides.length)}>‹</button>
-          <div className="amazon-home-hero-copy">
-            <h1><span>{heroTitleLead}</span> <em>{heroAccentWord}</em></h1>
-            <p>{active?.subtitle}</p>
-            <button type="button" className="btn-secondary" onClick={handleHeroAction}>{active?.buttonText || 'Shop now'}</button>
-          </div>
-          <div className="amazon-home-hero-image">
+        <div className="amazon-home-hero-inner">
+          <button type="button" className="amazon-hero-arrow left" aria-label="Previous banner" disabled={heroSlides.length < 2} onClick={() => setActiveSlide((c) => (c - 1 + heroSlides.length) % heroSlides.length)}><ChevronLeft size={25} aria-hidden="true" /></button>
+          <Link className="amazon-home-hero-image" to={active?.targetUrl || '/products'} aria-label={active?.title || 'Shop Robbobo'}>
             <img src={active?.image || ''} alt="" />
-          </div>
-          <button type="button" className="amazon-hero-arrow right" onClick={() => setActiveSlide((c) => (c + 1) % heroSlides.length)}>›</button>
+          </Link>
+          <button type="button" className="amazon-hero-arrow right" aria-label="Next banner" disabled={heroSlides.length < 2} onClick={() => setActiveSlide((c) => (c + 1) % heroSlides.length)}><ChevronRight size={25} aria-hidden="true" /></button>
         </div>
       </section>
 
@@ -122,7 +105,7 @@ const Home = () => {
           </div>
         </section>
 
-        <section className="storefront-section">
+        {/* <section className="storefront-section">
           <div className="storefront-heading"><h2>Best Sellers</h2><button type="button" onClick={() => navigate('/products?sort=popular')}>View all best sellers <ArrowRight size={15} /></button></div>
           <div className="storefront-bestsellers">
             {bestSellers.map((product) => (
@@ -134,7 +117,7 @@ const Home = () => {
               </article>
             ))}
           </div>
-        </section>
+        </section> */}
       </div>
     </div>
   )

@@ -244,7 +244,7 @@ const Checkout = () => {
           <div className="empty-shell page-card">
             <span className="alibaba-badge orange">Order confirmed</span>
             <h1 className="section-title" style={{ marginTop: 14 }}>Your order is on its way!</h1>
-            <p className="section-copy">Thank you for shopping at Robbobo. We'll process your order as quickly as possible.</p>
+            <p className="section-copy">Thank you for shopping at Robobbo. We'll process your order as quickly as possible.</p>
             <div className="summary-card" style={{ maxWidth: 360, margin: '18px auto 0' }}>
               <div style={{ fontWeight: 800, color: '#222' }}>{orderComplete.order_number}</div>
               <div className="supporting-text" style={{ marginTop: 6 }}>Total: GHc{Number(orderComplete.total).toFixed(2)}</div>
@@ -272,7 +272,7 @@ const Checkout = () => {
           <span className="alibaba-badge soft">Checkout</span>
           <h1 className="section-title" style={{ color: '#fff', marginTop: 12 }}>Complete your order</h1>
           <p className="section-copy" style={{ color: 'rgba(255,255,255,0.78)' }}>
-            Enter your shipping details to confirm your Robbobo order.
+            Enter your shipping details to confirm your Robobbo order.
           </p>
         </section>
 
@@ -354,7 +354,7 @@ const Checkout = () => {
               {placingOrder ? (paymentMethod === 'paystack' ? 'Connecting to Paystack...' : 'Placing order...') : (paymentMethod === 'paystack' ? `Pay GHc${total.toFixed(2)} with Paystack` : 'Place order')}
             </button>
             <div className="info-card">
-              <div className="supporting-text">Paystack payments are verified securely before your order is confirmed. Your secret payment credentials never pass through Robbobo.</div>
+              <div className="supporting-text">Paystack payments are verified securely before your order is confirmed. Your secret payment credentials never pass through Robobbo.</div>
             </div>
           </aside>
         </section>
