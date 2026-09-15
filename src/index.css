@@ -3575,13 +3575,16 @@ body {
 .amazon-home-hero-shell {
   display: block;
   width: 100%;
-  aspect-ratio: 1920 / 580; /* Maintains consistent proportion across all screens */
+  height: auto;
+  min-height: 0;
+  aspect-ratio: 1920 / 720;
   overflow: hidden;
   background: #f7f8fb;
 }
 .amazon-home-hero-shell::after { display: none; }
 .amazon-home-hero-inner {
-  position: relative;
+  position: absolute;
+  inset: 0;
   display: flex;
   align-items: center;
   width: 100%;
@@ -3617,15 +3620,6 @@ body {
 .amazon-hero-arrow:disabled { opacity: .35; cursor: default; }
 .amazon-home-panels { margin-top: 20px; }
 @media (max-width: 760px) {
-  .amazon-home-hero-shell {
-    width: 100%;
-    height: auto;
-    min-height: 0;
-    aspect-ratio: auto;
-  }
-  .amazon-home-hero-inner { display: block; height: auto; min-height: 0; }
-  .amazon-home-hero-image { position: relative; inset: auto; display: block; width: 100%; }
-  .amazon-home-hero-image img { display: block; width: 100%; height: auto; object-fit: contain; }
   .amazon-hero-arrow { width: 36px; height: 36px; }
   .amazon-hero-arrow.left { left: 8px; }
   .amazon-hero-arrow.right { right: 8px; }
