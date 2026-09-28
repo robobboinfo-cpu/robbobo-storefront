@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { ArrowRight, ChevronLeft, ChevronRight, ShoppingCart, Star } from 'lucide-react'
-import { useCart } from '../context/CartContext'
+import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react'
+import ProductCard from '../components/ProductCard'
 import { useSiteContent } from '../context/SiteContentContext'
 import { useProducts } from '../context/ProductContext'
 import { productMatchesCategory } from '../lib/productCategories'
@@ -29,7 +29,6 @@ const normalizeBanner = (banner, fallbackImage) => ({
 
 const Home = () => {
   const navigate = useNavigate()
-  const { addToCart } = useCart()
   const { products } = useProducts()
   const { siteContent } = useSiteContent()
   const categories = useMemo(() => siteContent.categories || [], [siteContent.categories])
@@ -68,21 +67,28 @@ const Home = () => {
   const newArrivals = useMemo(() => [...products].reverse().slice(0, 6), [products])
   const discoveryProducts = useMemo(() => products.filter((product) => selectedDepartment === 'All' || productMatchesCategory(product, selectedDepartment)).slice(0, 6), [products, selectedDepartment])
   const deals = useMemo(() => products.filter((product) => product.oldPrice > product.price).sort((a, b) => (1 - b.price / b.oldPrice) - (1 - a.price / a.oldPrice)).slice(0, 3), [products])
+  const productShelves = useMemo(() => {
+    const shown = new Set([...newArrivals, ...products.slice(0, 6), ...deals].map((product) => product.id))
+    const sections = [
+      { title: 'Electronics for every day', category: 'Electronics' },
+      { title: 'Home essentials', category: 'Home & Living' },
+      { title: 'Refresh your wardrobe', category: 'Fashion' },
+      { title: 'More to discover', category: null },
+    ]
+
+    return sections.map((section) => {
+      const items = products.filter((product) => !shown.has(product.id) && (!section.category || productMatchesCategory(product, section.category))).slice(0, section.category ? 6 : 12)
+      items.forEach((product) => shown.add(product.id))
+      return { ...section, items, href: section.category ? `/category/${encodeURIComponent(section.category)}` : '/products' }
+    }).filter((section) => section.items.length)
+  }, [products, newArrivals, deals])
   const collections = [
     { category: 'Home & Living', title: 'Small changes. Fresh spaces.', copy: 'Make room for slow mornings, cosy corners and a little everyday order.', action: 'Refresh your space', tone: 'home' },
     { category: 'Electronics', title: 'A smarter everyday setup.', copy: 'Find your next listening companion, desk upgrade or go-to gadget.', action: 'Explore the tech edit', tone: 'tech' },
     { category: 'Fashion', title: 'Good days start with your style.', copy: 'Bring a fresh perspective to the pieces you reach for again and again.', action: 'Find your next look', tone: 'style' },
   ].map((collection) => ({ ...collection, image: categories.find((category) => category.name === collection.category)?.image })).filter((collection) => collection.image)
 
-  const renderProduct = (product) => (
-    <article key={product.id} className="storefront-product-card">
-      <Link className="storefront-product-image" to={`/product/${product.id}`}><img loading="lazy" src={product.image} alt={product.name} /></Link>
-      <h3><Link to={`/product/${product.id}`}>{product.name}</Link></h3>
-      <strong>GHc {product.price.toFixed(2)}</strong>
-      <div className="storefront-rating"><Star size={13} fill="currentColor" /><small>{product.rating || 'Unrated'} ? {product.reviews || 0} reviews</small></div>
-      <button type="button" className="storefront-cart" aria-label={`Add ${product.name} to cart`} onClick={() => addToCart(product, 1)}><ShoppingCart size={16} /></button>
-    </article>
-  )
+  const renderProduct = (product) => <ProductCard key={product.id} product={product} />
 
   return (
     <div className="amazon-home page-section">
@@ -104,25 +110,26 @@ const Home = () => {
         <section className="storefront-section">
           <div className="storefront-heading"><h2>Shop by Categories</h2><button type="button" onClick={() => navigate('/products')}>View all categories <ArrowRight size={15} /></button></div>
           <div className="storefront-categories">
-            {categories.slice(0, 6).map((category) => (
-              <button key={category.name} type="button" className="storefront-category" onClick={() => navigate(`/category/${encodeURIComponent(category.name)}`)}>
+            {categories.map((category) => (
+              <Link key={category.name} className="storefront-category" to={`/category/${encodeURIComponent(category.name)}`}>
                 <img
                   src={category.image}
-                  alt={category.name}
+                  alt=""
+                  loading="lazy"
                   onError={(event) => {
                     event.currentTarget.onerror = null
                     event.currentTarget.src = categoryImageFallback
                   }}
                 />
-                <span><strong>{category.name}</strong><small>Shop now</small><ArrowRight size={15} /></span>
-              </button>
+                <span>{category.name}</span>
+              </Link>
             ))}
           </div>
         </section>
 
         <section className="storefront-section">
           <div className="storefront-heading"><h2>New Arrivals</h2><button type="button" onClick={() => navigate('/products?sort=newest')}>View all new arrivals <ArrowRight size={15} /></button></div>
-          <div className="storefront-arrivals">
+          <div className="products-grid">
             {newArrivals.map(renderProduct)}
           </div>
         </section>
@@ -157,22 +164,24 @@ const Home = () => {
           <div className="storefront-departments" role="group" aria-label="Filter featured products by department">
             {['All', ...categories.map((category) => category.name)].map((name) => <button key={name} type="button" aria-pressed={selectedDepartment === name} onClick={() => setSelectedDepartment(name)}>{name === 'All' ? 'A bit of everything' : name}</button>)}
           </div>
-          <div className="storefront-arrivals" aria-live="polite">{discoveryProducts.map(renderProduct)}</div>
+          <div className="products-grid" aria-live="polite">{discoveryProducts.map(renderProduct)}</div>
           {!discoveryProducts.length && <p className="storefront-empty">More finds are on the way. Explore another department for now.</p>}
         </section>
 
         {deals.length > 0 && <section className="storefront-section storefront-deals" aria-labelledby="deals-heading">
           <div className="storefront-heading"><div><h2 id="deals-heading">Make a little room for a good deal</h2></div><Link className="storefront-text-link" to="/products?deals=true">Shop all deals <ArrowRight size={15} /></Link></div>
-          <div className="storefront-bestsellers">{deals.map((product) => (
-            <article key={product.id} className="storefront-bestseller">
-              <span className="storefront-badge">Save {Math.round((1 - product.price / product.oldPrice) * 100)}%</span>
-              <Link className="storefront-best-image" to={`/product/${product.id}`}><img loading="lazy" src={product.image} alt={product.name} /></Link>
-              <div className="storefront-best-copy"><h3><Link to={`/product/${product.id}`}>{product.name}</Link></h3><strong>GHc {product.price.toFixed(2)}</strong><del className="storefront-old-price">GHc {product.oldPrice.toFixed(2)}</del><p>{product.description}</p><button type="button" onClick={() => addToCart(product, 1)}>Add to cart</button></div>
-            </article>
-          ))}</div>
+          <div className="products-grid">{deals.map(renderProduct)}</div>
         </section>}
 
-
+        {productShelves.map((section) => (
+          <section key={section.title} className="storefront-section" aria-label={section.title}>
+            <div className="storefront-heading">
+              <h2>{section.title}</h2>
+              <Link className="storefront-text-link" to={section.href}>View all <ArrowRight size={15} /></Link>
+            </div>
+            <div className="products-grid">{section.items.map(renderProduct)}</div>
+          </section>
+        ))}
       </div>
     </div>
   )
