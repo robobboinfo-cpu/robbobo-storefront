@@ -7,6 +7,20 @@ const ProductContext = createContext()
 
 export const useProducts = () => useContext(ProductContext)
 
+// Share an in-flight catalog request across mounts and simultaneous focus events.
+let catalogRequest = null
+const fetchCatalog = () => {
+  if (!catalogRequest) {
+    catalogRequest = Promise.resolve(supabase
+      .from('products')
+      .select('*')
+      .eq('status', 'active')
+      .order('created_at', { ascending: false }))
+      .finally(() => { catalogRequest = null })
+  }
+  return catalogRequest
+}
+
 // Maps exact Supabase column names to the shape the app expects
 const normalize = (p) => ({
   id: p.id,
@@ -36,11 +50,14 @@ export const ProductProvider = ({ children }) => {
     let isMounted = true
 
     const fetchProducts = async () => {
-      const { data, error } = await supabase
-        .from('products')
-        .select('*')
-        .eq('status', 'active')
-        .order('created_at', { ascending: false })
+      let data, error
+      try {
+        const result = await fetchCatalog()
+        data = result.data
+        error = result.error
+      } catch (caughtError) {
+        error = caughtError
+      }
 
       if (error || !(data || []).length) {
         if (!isMounted) return

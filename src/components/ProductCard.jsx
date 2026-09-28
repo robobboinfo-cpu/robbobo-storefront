@@ -11,7 +11,7 @@ const ProductCard = ({ product }) => {
       <Link to={`/product/${product.id}`} className="product-card-link" aria-label={`View ${product.name}`}>
         <div className="product-media amazon-product-media">
           {product.tag ? <span className="product-card-tag">{product.tag}</span> : null}
-          <img src={product.image} alt={product.name} onError={(event) => { event.currentTarget.style.display = 'none' }} />
+          <img src={product.image} alt={product.name} loading="lazy" decoding="async" onError={(event) => { event.currentTarget.style.display = 'none' }} />
         </div>
 
         <div className="product-body amazon-product-body">

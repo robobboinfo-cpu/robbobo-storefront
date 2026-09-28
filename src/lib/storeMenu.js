@@ -194,7 +194,9 @@ export const buildMenuTree = (items = defaultStoreMenuItems) => {
   return { subnavItems, utilityItems, departments, footerSections, rawItems: activeItems }
 }
 
-export const fetchStoreMenuItems = async (supabase) => {
+const menuRequests = new WeakMap()
+
+const loadStoreMenuItems = async (supabase) => {
   const { data, error } = await supabase
     .from('store_menu_items')
     .select('*')
@@ -207,8 +209,26 @@ export const fetchStoreMenuItems = async (supabase) => {
   return { data: mergeWithDefaultStoreMenuItems(data), error: null }
 }
 
+export const fetchStoreMenuItems = (supabase) => {
+  const cached = menuRequests.get(supabase)
+  if (cached && cached.expires > Date.now()) return cached.promise
+  const entry = { expires: Infinity }
+  entry.promise = loadStoreMenuItems(supabase).then((result) => {
+    entry.expires = Date.now() + (result.error ? 5000 : 60000)
+    return result
+  }, (error) => {
+    if (menuRequests.get(supabase) === entry) menuRequests.delete(supabase)
+    throw error
+  })
+  menuRequests.set(supabase, entry)
+  return entry.promise
+}
+
 export const subscribeToStoreMenuItems = (supabase, onChange) =>
   supabase
     .channel('public-store-menu-items')
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'store_menu_items' }, onChange)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'store_menu_items' }, () => {
+      menuRequests.delete(supabase)
+      onChange()
+    })
     .subscribe()

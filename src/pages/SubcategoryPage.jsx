@@ -8,7 +8,7 @@ import { buildDepartmentSubcategoryMap, productMatchesSubcategory } from '../lib
 
 const SubcategoryPage = () => {
   const { category, subcategory } = useParams()
-  const { products } = useProducts()
+  const { products, loading } = useProducts()
   const [menuItems, setMenuItems] = useState(defaultStoreMenuItems)
   const decodedCategory = decodeURIComponent(category)
   const decodedSubcategory = decodeURIComponent(subcategory)
@@ -31,6 +31,8 @@ const SubcategoryPage = () => {
 
   return (
     <ListingPage
+      key={`${category}/${subcategory}`}
+      loading={loading}
       title={decodedSubcategory}
       subtitle={`All ${decodedSubcategory} items from ${decodedCategory}, presented in an Alibaba-style product gallery.`}
       products={filtered}

@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useProducts } from '../context/ProductContext'
-import ProductCard from '../components/ProductCard'
+import InfiniteProductGrid from '../components/InfiniteProductGrid'
 import { buildMenuTree, defaultStoreMenuItems, fetchStoreMenuItems } from '../lib/storeMenu'
 import { supabase } from '../lib/supabase'
 import { buildDepartmentSubcategoryMap, productMatchesCategory } from '../lib/productCategories'
 
-export const ListingPage = ({ title, subtitle, products, chips = [] }) => {
+export const ListingPage = ({ title, subtitle, products, chips = [], loading = false }) => {
   const navigate = useNavigate()
   const [sortBy, setSortBy] = useState('popular')
 
@@ -39,9 +39,9 @@ export const ListingPage = ({ title, subtitle, products, chips = [] }) => {
 
         <section className="page-card" style={{ padding: 20 }}>
           <div className="toolbar-grid" style={{ marginBottom: 18 }}>
-            <div className="supporting-text">{filteredProducts.length} products available</div>
+            <div className="supporting-text">{loading ? 'Loading products...' : `${filteredProducts.length} products available`}</div>
             <div />
-            <select className="select" value={sortBy} onChange={(event) => setSortBy(event.target.value)}>
+            <select className="select" aria-label="Sort products" value={sortBy} onChange={(event) => { setSortBy(event.target.value) }}>
               <option value="popular">Most popular</option>
               <option value="rating">Top rated</option>
               <option value="price-low">Price low to high</option>
@@ -60,10 +60,11 @@ export const ListingPage = ({ title, subtitle, products, chips = [] }) => {
             </div>
           ) : null}
 
-          {filteredProducts.length ? (
-            <div className="products-grid">
-              {filteredProducts.map((product) => <ProductCard key={product.id} product={product} />)}
-            </div>
+          {loading && !filteredProducts.length ? <div className="empty-shell" role="status">Loading products...</div> : filteredProducts.length ? (
+            <>
+            <InfiniteProductGrid key={sortBy} products={filteredProducts} />
+
+            </>
           ) : (
             <div className="empty-shell">
               <h3 style={{ margin: 0, color: '#222' }}>No products found</h3>
@@ -80,7 +81,7 @@ export const ListingPage = ({ title, subtitle, products, chips = [] }) => {
 const CategoryPage = () => {
   const { category } = useParams()
   const navigate = useNavigate()
-  const { products } = useProducts()
+  const { products, loading } = useProducts()
   const [menuItems, setMenuItems] = useState(defaultStoreMenuItems)
   const decodedCategory = decodeURIComponent(category)
   const menuTree = useMemo(() => buildMenuTree(menuItems), [menuItems])
@@ -103,6 +104,8 @@ const CategoryPage = () => {
 
   return (
     <ListingPage
+      key={category}
+      loading={loading}
       title={decodedCategory}
       subtitle={`Discover ${decodedCategory} listings arranged in a high-density marketplace layout with direct retail purchase flow.`}
       products={categoryProducts}
