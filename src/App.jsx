@@ -12,6 +12,7 @@ import Account from './pages/Account'
 import CategoryPage from './pages/CategoryPage'
 import SubcategoryPage from './pages/SubcategoryPage'
 import Checkout from './pages/Checkout'
+import RequireSignIn from './components/RequireSignIn'
 import GenericPage from './pages/GenericPage'
 import Login from './pages/Login'
 import Register from './pages/Register'
@@ -31,7 +32,7 @@ function App() {
                 <Route element={<Layout />}>
                   <Route path="/" element={<Home />} />
                   <Route path="/cart" element={<Cart />} />
-                  <Route path="/checkout" element={<Checkout />} />
+                  <Route path="/checkout" element={<RequireSignIn><Checkout /></RequireSignIn>} />
                   <Route path="/products" element={<Products />} />
                   <Route path="/product/:id" element={<ProductDetail />} />
                   <Route path="/account" element={<Account />} />

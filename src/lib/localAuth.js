@@ -55,7 +55,7 @@ const stripPassword = (user) => {
   return safeUser
 }
 
-export const registerLocalAuth = ({ name, email, password, storage }) => {
+export const registerLocalAuth = ({ name, email, password, phone = '', storage }) => {
   const users = loadLocalUsers(storage)
   const normalizedEmail = normalizeEmail(email)
 
@@ -71,7 +71,7 @@ export const registerLocalAuth = ({ name, email, password, storage }) => {
     id: `local-${Date.now()}`,
     email: normalizedEmail,
     password,
-    user_metadata: { full_name: name, role: 'customer', local_fallback: true },
+    user_metadata: { full_name: name, phone, role: 'customer', local_fallback: true },
     app_metadata: { provider: 'email', providers: ['email'] },
     aud: 'authenticated',
     created_at: new Date().toISOString(),

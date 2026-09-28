@@ -44,7 +44,11 @@ const Checkout = () => {
   const total = useMemo(() => Number((cartTotal + shipping + tax).toFixed(2)), [cartTotal, shipping, tax])
 
   const completePaystackOrder = useCallback(async (reference, pendingRaw) => {
+    if (!currentUser) throw new Error('Please sign in to complete your order.')
     const pending = JSON.parse(pendingRaw)
+    if (String(pending.order.customer_email || '').trim().toLowerCase() !== accountEmail) {
+      throw new Error('Please sign in with the account that started this order to confirm your payment.')
+    }
     if (pending.reference !== reference) throw new Error('Payment reference does not match the pending order.')
 
     const verifyResponse = await fetch(`/api/paystack/verify?reference=${encodeURIComponent(reference)}`)
@@ -61,7 +65,7 @@ const Checkout = () => {
     setSavedLocallyNotice(Boolean(supabaseError || !data))
     window.sessionStorage.removeItem('robbobo_pending_paystack_order')
     window.history.replaceState({}, '', '/checkout')
-  }, [clearCart])
+  }, [clearCart, currentUser, accountEmail])
 
   useEffect(() => {
     const reference = paymentReference
@@ -96,6 +100,10 @@ const Checkout = () => {
   }
 
   const placeOrder = async () => {
+    if (!currentUser) {
+      navigate('/login', { replace: true, state: { from: '/checkout', requireSignIn: true } })
+      return
+    }
     const requiredFields = ['firstName', 'lastName', 'email', 'phone', 'address', 'city', 'country']
     const missing = requiredFields.find((field) => !formData[field]?.trim())
     if (missing) {

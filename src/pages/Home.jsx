@@ -1,12 +1,21 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { ArrowRight, ChevronLeft, ChevronRight, Heart, ShoppingCart, Star } from 'lucide-react'
+import { ArrowRight, ChevronLeft, ChevronRight, ShoppingCart, Star } from 'lucide-react'
 import { useCart } from '../context/CartContext'
 import { useSiteContent } from '../context/SiteContentContext'
 import { useProducts } from '../context/ProductContext'
+import { productMatchesCategory } from '../lib/productCategories'
 import { supabase } from '../lib/supabase'
 
 const categoryImageFallback = 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=900&h=700&fit=crop&q=85'
+
+const featuredDepartments = [
+  { key: 'wireless', title: 'Wireless audio', copy: 'Your music, without the wires.', image: '/images/featured/wireless.jpg', search: 'wireless' },
+  { key: 'headphones', title: 'Headphones', copy: 'Find a pair for your favourite playlist, the daily commute or a quiet moment.', image: '/images/featured/headphones.jpg', search: 'headphones' },
+  { key: 'accessories', title: 'Bags & accessories', copy: 'The finishing touch for your everyday.', image: '/images/featured/accessories.jpg', search: 'bag' },
+  { key: 'desk', title: 'On your desk', copy: 'Keyboards and more for your setup.', image: '/images/featured/desk.jpg', search: 'keyboard' },
+  { key: 'gaming', title: 'Gaming gear', copy: 'Make your next session a good one.', image: '/images/featured/gaming.jpg', search: 'gaming' },
+]
 
 const normalizeBanner = (banner, fallbackImage) => ({
   id: banner.id,
@@ -25,6 +34,7 @@ const Home = () => {
   const { siteContent } = useSiteContent()
   const categories = useMemo(() => siteContent.categories || [], [siteContent.categories])
   const homeContent = siteContent.homeContent
+  const [selectedDepartment, setSelectedDepartment] = useState('All')
   const [activeSlide, setActiveSlide] = useState(0)
   const [heroSlides, setHeroSlides] = useState(homeContent.fallbackSlides)
 
@@ -56,7 +66,23 @@ const Home = () => {
   const safeActiveSlide = heroSlides.length ? activeSlide % heroSlides.length : 0
   const active = heroSlides[safeActiveSlide]
   const newArrivals = useMemo(() => [...products].reverse().slice(0, 6), [products])
-  const bestSellers = useMemo(() => [...products].sort((a, b) => (b.reviews || 0) - (a.reviews || 0)).slice(0, 3), [products])
+  const discoveryProducts = useMemo(() => products.filter((product) => selectedDepartment === 'All' || productMatchesCategory(product, selectedDepartment)).slice(0, 6), [products, selectedDepartment])
+  const deals = useMemo(() => products.filter((product) => product.oldPrice > product.price).sort((a, b) => (1 - b.price / b.oldPrice) - (1 - a.price / a.oldPrice)).slice(0, 3), [products])
+  const collections = [
+    { category: 'Home & Living', title: 'Small changes. Fresh spaces.', copy: 'Make room for slow mornings, cosy corners and a little everyday order.', action: 'Refresh your space', tone: 'home' },
+    { category: 'Electronics', title: 'A smarter everyday setup.', copy: 'Find your next listening companion, desk upgrade or go-to gadget.', action: 'Explore the tech edit', tone: 'tech' },
+    { category: 'Fashion', title: 'Good days start with your style.', copy: 'Bring a fresh perspective to the pieces you reach for again and again.', action: 'Find your next look', tone: 'style' },
+  ].map((collection) => ({ ...collection, image: categories.find((category) => category.name === collection.category)?.image })).filter((collection) => collection.image)
+
+  const renderProduct = (product) => (
+    <article key={product.id} className="storefront-product-card">
+      <Link className="storefront-product-image" to={`/product/${product.id}`}><img loading="lazy" src={product.image} alt={product.name} /></Link>
+      <h3><Link to={`/product/${product.id}`}>{product.name}</Link></h3>
+      <strong>GHc {product.price.toFixed(2)}</strong>
+      <div className="storefront-rating"><Star size={13} fill="currentColor" /><small>{product.rating || 'Unrated'} ? {product.reviews || 0} reviews</small></div>
+      <button type="button" className="storefront-cart" aria-label={`Add ${product.name} to cart`} onClick={() => addToCart(product, 1)}><ShoppingCart size={16} /></button>
+    </article>
+  )
 
   return (
     <div className="amazon-home page-section">
@@ -71,6 +97,10 @@ const Home = () => {
       </section>
 
       <div className="page-shell storefront-home">
+        <section className="storefront-welcome">
+          <div><h1>Find your next everyday favourite.</h1><p>For your space, your style and everything in between. Explore a little more of Robbobo.</p></div>
+          <Link className="storefront-text-link" to="/products">Explore the store <ArrowRight size={18} /></Link>
+        </section>
         <section className="storefront-section">
           <div className="storefront-heading"><h2>Shop by Categories</h2><button type="button" onClick={() => navigate('/products')}>View all categories <ArrowRight size={15} /></button></div>
           <div className="storefront-categories">
@@ -93,31 +123,56 @@ const Home = () => {
         <section className="storefront-section">
           <div className="storefront-heading"><h2>New Arrivals</h2><button type="button" onClick={() => navigate('/products?sort=newest')}>View all new arrivals <ArrowRight size={15} /></button></div>
           <div className="storefront-arrivals">
-            {newArrivals.map((product) => (
-              <article key={product.id} className="storefront-product-card">
-                <button type="button" className="storefront-wish" aria-label="Add to wishlist"><Heart size={16} /></button>
-                <button type="button" className="storefront-product-image" onClick={() => navigate(`/product/${product.id}`)}><img src={product.image} alt={product.name} /></button>
-                <h3>{product.name}</h3><strong>GHc{product.price.toFixed(2)}</strong>
-                <div className="storefront-rating"><span>★★★★★</span><small>({product.reviews || 0})</small></div>
-                <button type="button" className="storefront-cart" aria-label={`Add ${product.name} to cart`} onClick={() => addToCart(product, 1)}><ShoppingCart size={16} /></button>
-              </article>
+            {newArrivals.map(renderProduct)}
+          </div>
+        </section>
+
+        <section className="storefront-section storefront-feature-grid" aria-label="Featured shopping collections">
+          {featuredDepartments.map((department) => (
+            <Link key={department.key} className={`storefront-feature-tile storefront-feature-${department.key}`} to={`/products?search=${encodeURIComponent(department.search)}`}>
+              <img loading="lazy" src={department.image} alt="" />
+              <div className="storefront-feature-copy">
+                <h2>{department.title}</h2>
+                <p>{department.copy}</p>
+                <span className="storefront-feature-cta">Shop now<span className="storefront-feature-sr">: {department.title}</span></span>
+              </div>
+            </Link>
+          ))}
+        </section>
+
+        <section className="storefront-section" aria-labelledby="collections-heading">
+          <div className="storefront-heading"><div><h2 id="collections-heading">A little inspiration for your everyday</h2></div></div>
+          <div className="storefront-collections">
+            {collections.map((collection) => (
+              <Link key={collection.category} className={`storefront-collection ${collection.tone}`} to={`/category/${encodeURIComponent(collection.category)}`}>
+                <img loading="lazy" src={collection.image} alt="" />
+                <div><h3>{collection.title}</h3><p>{collection.copy}</p><span className="storefront-text-link">{collection.action} <ArrowRight size={17} /></span></div>
+              </Link>
             ))}
           </div>
         </section>
 
-        {/* <section className="storefront-section">
-          <div className="storefront-heading"><h2>Best Sellers</h2><button type="button" onClick={() => navigate('/products?sort=popular')}>View all best sellers <ArrowRight size={15} /></button></div>
-          <div className="storefront-bestsellers">
-            {bestSellers.map((product) => (
-              <article key={product.id} className="storefront-bestseller">
-                <span className="storefront-badge">Bestseller</span>
-                <button type="button" className="storefront-best-image" onClick={() => navigate(`/product/${product.id}`)}><img src={product.image} alt={product.name} /></button>
-                <div className="storefront-best-copy"><h3>{product.name}</h3><strong>GHc{product.price.toFixed(2)}</strong><div className="storefront-rating"><span>★★★★★</span><small>({product.reviews || 0})</small></div><p>{product.description}</p><button type="button" onClick={() => addToCart(product, 1)}>Quick add</button></div>
-                <button type="button" className="storefront-best-cart" aria-label={`Add ${product.name} to cart`} onClick={() => addToCart(product, 1)}><ShoppingCart size={16} /></button>
-              </article>
-            ))}
+        <section className="storefront-section storefront-discover" aria-labelledby="discover-heading">
+          <div className="storefront-heading"><div><h2 id="discover-heading">What are you shopping for?</h2></div><Link className="storefront-text-link" to={selectedDepartment === 'All' ? '/products' : `/category/${encodeURIComponent(selectedDepartment)}`}>Explore more <ArrowRight size={15} /></Link></div>
+          <div className="storefront-departments" role="group" aria-label="Filter featured products by department">
+            {['All', ...categories.map((category) => category.name)].map((name) => <button key={name} type="button" aria-pressed={selectedDepartment === name} onClick={() => setSelectedDepartment(name)}>{name === 'All' ? 'A bit of everything' : name}</button>)}
           </div>
-        </section> */}
+          <div className="storefront-arrivals" aria-live="polite">{discoveryProducts.map(renderProduct)}</div>
+          {!discoveryProducts.length && <p className="storefront-empty">More finds are on the way. Explore another department for now.</p>}
+        </section>
+
+        {deals.length > 0 && <section className="storefront-section storefront-deals" aria-labelledby="deals-heading">
+          <div className="storefront-heading"><div><h2 id="deals-heading">Make a little room for a good deal</h2></div><Link className="storefront-text-link" to="/products?deals=true">Shop all deals <ArrowRight size={15} /></Link></div>
+          <div className="storefront-bestsellers">{deals.map((product) => (
+            <article key={product.id} className="storefront-bestseller">
+              <span className="storefront-badge">Save {Math.round((1 - product.price / product.oldPrice) * 100)}%</span>
+              <Link className="storefront-best-image" to={`/product/${product.id}`}><img loading="lazy" src={product.image} alt={product.name} /></Link>
+              <div className="storefront-best-copy"><h3><Link to={`/product/${product.id}`}>{product.name}</Link></h3><strong>GHc {product.price.toFixed(2)}</strong><del className="storefront-old-price">GHc {product.oldPrice.toFixed(2)}</del><p>{product.description}</p><button type="button" onClick={() => addToCart(product, 1)}>Add to cart</button></div>
+            </article>
+          ))}</div>
+        </section>}
+
+
       </div>
     </div>
   )

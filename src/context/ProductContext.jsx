@@ -12,7 +12,7 @@ const normalize = (p) => ({
   id: p.id,
   name: p.name || '',
   price: parseFloat(p.price) || 0,
-  oldPrice: parseFloat(p.old_price) || parseFloat(((p.price || 0) * 1.3).toFixed(2)),
+  oldPrice: parseFloat(p.old_price) || null,
   image: p.image || (Array.isArray(p.images) ? p.images[0] : '') || '',
   images: Array.isArray(p.images) ? p.images : [],
   category: p.category || 'General',

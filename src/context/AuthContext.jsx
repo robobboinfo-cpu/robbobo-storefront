@@ -80,17 +80,17 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
-  const register = async (name, email, password) => {
+  const register = async (name, email, password, phone = '') => {
     try {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
-        options: { data: { full_name: name } },
+        options: { data: { full_name: name, phone } },
       })
 
       if (!error) {
         if (!data.session) {
-          const fallback = registerLocalAuth({ name, email, password })
+          const fallback = registerLocalAuth({ name, email, password, phone })
           if (fallback.success) {
             const normalizedUser = normalizeUser(fallback.user)
             setCurrentUser(normalizedUser)
@@ -121,7 +121,7 @@ export const AuthProvider = ({ children }) => {
       }
 
       if (isFetchStyleError(error)) {
-        const fallback = registerLocalAuth({ name, email, password })
+        const fallback = registerLocalAuth({ name, email, password, phone })
         if (fallback.success) {
           setCurrentUser(normalizeUser(fallback.user))
           return { ...fallback, user: normalizeUser(fallback.user) }
@@ -131,7 +131,7 @@ export const AuthProvider = ({ children }) => {
 
       return { success: false, message: error.message }
     } catch (caughtError) {
-      const fallback = registerLocalAuth({ name, email, password })
+      const fallback = registerLocalAuth({ name, email, password, phone })
       if (fallback.success) {
         setCurrentUser(normalizeUser(fallback.user))
         return { ...fallback, user: normalizeUser(fallback.user) }
