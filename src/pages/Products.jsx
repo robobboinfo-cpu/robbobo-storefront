@@ -75,7 +75,7 @@ export default function ProductsPage() {
           <span className="alibaba-badge soft">All products</span>
           <h1 className="section-title" style={{ color: '#fff', marginTop: 12 }}>Browse the full catalog</h1>
           <p className="section-copy" style={{ color: 'rgba(255,255,255,0.78)' }}>
-            Search, filter by category, sort by price or rating, and find exactly what you need from Robbobo's full product range.
+            Search, filter by category, sort by price or rating, and find exactly what you need from Robobbo's full product range.
           </p>
         </section>
 

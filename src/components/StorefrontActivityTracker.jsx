@@ -49,7 +49,7 @@ const StorefrontActivityTracker = () => {
 
     supabase.from('storefront_visits').insert([{
       page_path: path,
-      page_title: document.title || 'Robbobo',
+      page_title: document.title || 'Robobbo',
       visitor_token: visitorToken,
       session_token: sessionToken,
       user_email: currentUser?.email || null,

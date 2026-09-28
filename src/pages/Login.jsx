@@ -37,7 +37,7 @@ export default function Login() {
       <AuthPassword id="password" label="Password" value={password} onChange={(event) => setPassword(event.target.value)} autoComplete="current-password" />
       <button className="shop-auth-submit" disabled={loading}>{loading ? 'Signing in...' : 'Sign in to shop'}</button>
     </form>
-    <p className="shop-auth-switch">New to Robbobo? <Link to="/register" state={{ from }}>Create an account</Link></p>
+    <p className="shop-auth-switch">New to Robobbo? <Link to="/register" state={{ from }}>Create an account</Link></p>
     <p className="shop-auth-legal">By signing in, you agree to our <Link to="/terms">Terms of Service</Link> and <Link to="/privacy">Privacy Policy</Link>.</p>
   </AuthLayout>
 }

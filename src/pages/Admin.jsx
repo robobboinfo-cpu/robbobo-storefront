@@ -108,7 +108,7 @@ const Admin = () => {
           <span className="alibaba-badge soft">Admin</span>
           <h1 className="section-title" style={{ color: '#fff', marginTop: 12 }}>Product management</h1>
           <p className="section-copy" style={{ color: 'rgba(255,255,255,0.78)' }}>
-            Manage the Robbobo product catalog - add, edit, and remove listings.
+            Manage the Robobbo product catalog - add, edit, and remove listings.
           </p>
         </section>
 

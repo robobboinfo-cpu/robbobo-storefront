@@ -89,7 +89,7 @@ const Home = () => {
       <section className="amazon-home-hero-shell">
         <div className="amazon-home-hero-inner">
           <button type="button" className="amazon-hero-arrow left" aria-label="Previous banner" disabled={heroSlides.length < 2} onClick={() => setActiveSlide((c) => (c - 1 + heroSlides.length) % heroSlides.length)}><ChevronLeft size={25} aria-hidden="true" /></button>
-          <Link className="amazon-home-hero-image" to={active?.targetUrl || '/products'} aria-label={active?.title || 'Shop Robbobo'}>
+          <Link className="amazon-home-hero-image" to={active?.targetUrl || '/products'} aria-label={active?.title || 'Shop Robobbo'}>
             <img src={active?.image || ''} alt="" />
           </Link>
           <button type="button" className="amazon-hero-arrow right" aria-label="Next banner" disabled={heroSlides.length < 2} onClick={() => setActiveSlide((c) => (c + 1) % heroSlides.length)}><ChevronRight size={25} aria-hidden="true" /></button>
@@ -98,7 +98,7 @@ const Home = () => {
 
       <div className="page-shell storefront-home">
         <section className="storefront-welcome">
-          <div><h1>Find your next everyday favourite.</h1><p>For your space, your style and everything in between. Explore a little more of Robbobo.</p></div>
+          <div><h1>Find your next everyday favourite.</h1><p>For your space, your style and everything in between. Explore a little more of Robobbo.</p></div>
           <Link className="storefront-text-link" to="/products">Explore the store <ArrowRight size={18} /></Link>
         </section>
         <section className="storefront-section">

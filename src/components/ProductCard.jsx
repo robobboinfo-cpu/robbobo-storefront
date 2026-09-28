@@ -23,7 +23,7 @@ const ProductCard = ({ product }) => {
 
           <div className="product-card-location">
             <MapPin size={13} />
-            <span>Robbobo Store · {product.category}</span>
+            <span>Robobbo Store · {product.category}</span>
           </div>
 
           <div className="product-card-pricing">

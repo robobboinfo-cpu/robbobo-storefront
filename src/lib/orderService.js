@@ -109,7 +109,7 @@ export const submitContact = async (contactData) => {
         error.message?.toLowerCase().includes('environment variable')
       throw new Error(
         isConfigError
-          ? 'Message service is temporarily unavailable. Please email us directly at care@robbobo.com'
+          ? 'Message service is temporarily unavailable. Please email us directly at care@robobbo.com'
           : error.message || 'Failed to send message. Please try again.'
       )
     }

@@ -11,7 +11,7 @@ const footerDefaults = [
   { id: 'footer-support-returns', kind: 'footer_support', parent_id: null, label: 'Returns & Refunds', path: '/returns', sort_order: 3, is_active: true },
   { id: 'footer-support-faq', kind: 'footer_support', parent_id: null, label: 'FAQ', path: '/faq', sort_order: 4, is_active: true },
   { id: 'footer-support-contact', kind: 'footer_support', parent_id: null, label: 'Contact Us', path: '/contact', sort_order: 5, is_active: true },
-  { id: 'footer-company-about', kind: 'footer_company', parent_id: null, label: 'About Robbobo', path: '/about', sort_order: 1, is_active: true },
+  { id: 'footer-company-about', kind: 'footer_company', parent_id: null, label: 'About Robobbo', path: '/about', sort_order: 1, is_active: true },
   { id: 'footer-company-privacy', kind: 'footer_company', parent_id: null, label: 'Privacy Policy', path: '/privacy', sort_order: 2, is_active: true },
   { id: 'footer-company-terms', kind: 'footer_company', parent_id: null, label: 'Terms of Service', path: '/terms', sort_order: 3, is_active: true },
   { id: 'footer-company-accessibility', kind: 'footer_company', parent_id: null, label: 'Accessibility', path: '/accessibility', sort_order: 4, is_active: true },

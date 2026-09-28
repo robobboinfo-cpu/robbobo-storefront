@@ -1,17 +1,17 @@
 export const defaultSiteContent = {
   storeBrand: {
-    name: 'Robbobo',
-    wordmark: 'ROBBOBO',
+    name: 'Robobbo',
+    wordmark: 'ROBOBBO',
     accent: '#f97316',
     dark: '#131921',
     tagline: 'Smart shopping for everyday living',
-    description: 'Robbobo is a single-store retail shop for electronics, home upgrades, beauty, fashion, and family essentials.',
-    supportEmail: 'care@robbobo.com',
+    description: 'Robobbo is a single-store retail shop for electronics, home upgrades, beauty, fashion, and family essentials.',
+    supportEmail: 'care@robobbo.com',
     supportPhone: '+233 30 000 0000',
     supportLocation: 'Accra, Ghana',
     supportLocationNote: 'Operations and fulfillment base',
     deliveryLabel: 'Ghana',
-    copyrightLine: '© 2026 Robbobo. All rights reserved.',
+    copyrightLine: '© 2026 Robobbo. All rights reserved.',
   },
   categories: [
     { name: 'Electronics', icon: 'Devices', description: 'Audio, mobile accessories, work-from-home gear, and smart tech.', image: 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=900&h=700&fit=crop' },
@@ -24,9 +24,9 @@ export const defaultSiteContent = {
   homeContent: {
     mobileMenu: {
       kicker: 'Browse',
-      heading: 'Browse Robbobo',
+      heading: 'Browse Robobbo',
       signInLabel: 'Sign in',
-      homeLabel: 'Robbobo Home',
+      homeLabel: 'Robobbo Home',
       quickLinksLabel: 'Quick links',
       featuredLabel: 'Trending',
       departmentsLabel: 'Top Departments',
@@ -187,13 +187,13 @@ export const defaultSiteContent = {
   },
   infoPages: {
     about: {
-      title: 'About Robbobo',
-      description: 'Robbobo is a customer-focused online store built to make everyday shopping in Ghana simpler, faster, and more reliable.',
+      title: 'About Robobbo',
+      description: 'Robobbo is a customer-focused online store built to make everyday shopping in Ghana simpler, faster, and more reliable.',
       sections: [
         {
           heading: 'Who we are',
           items: [
-            'Robbobo is an online retail store serving shoppers who want trusted products across electronics, fashion, home, beauty, and everyday essentials.',
+            'Robobbo is an online retail store serving shoppers who want trusted products across electronics, fashion, home, beauty, and everyday essentials.',
             'Our goal is to combine broad product discovery with a cleaner shopping experience that feels easy to use on both desktop and mobile.',
             'We are building a storefront designed around straightforward browsing, clear product pages, simple checkout, and reliable support.',
           ],
@@ -235,7 +235,7 @@ export const defaultSiteContent = {
     },
     returns: {
       title: 'Returns & Refunds',
-      description: 'Learn how Robbobo handles return requests, exchanges, refunds, and support for eligible orders.',
+      description: 'Learn how Robobbo handles return requests, exchanges, refunds, and support for eligible orders.',
       sections: [
         {
           heading: 'Eligible returns',
@@ -250,13 +250,13 @@ export const defaultSiteContent = {
           items: [
             'Products showing misuse, damage after delivery, missing accessories, or heavy wear may not qualify for full return approval.',
             'Some hygiene-sensitive, clearance, custom, or specially sourced items may be non-returnable unless faulty or incorrectly supplied.',
-            'Robbobo may request photos, videos, or additional details before approving a disputed or damaged-item return.',
+            'Robobbo may request photos, videos, or additional details before approving a disputed or damaged-item return.',
           ],
         },
         {
           heading: 'How to request a return',
           items: [
-            'Contact Robbobo support and provide your order number, name, phone number, and a short explanation of the issue.',
+            'Contact Robobbo support and provide your order number, name, phone number, and a short explanation of the issue.',
             'Where relevant, include clear photos of the item, packaging, damage, defect, or incorrect product received.',
             'Do not return products without approval instructions, as support may first provide troubleshooting, exchange, or collection guidance.',
           ],
@@ -266,14 +266,14 @@ export const defaultSiteContent = {
           items: [
             'Approved returns may be resolved by exchange, store credit, partial refund, or full refund depending on the issue and product condition.',
             'Refund timing can vary based on payment method, verification checks, and whether the returned item has been inspected.',
-            'Delivery fees, handling charges, or collection costs may not always be refundable unless the return is caused by Robbobo error.',
+            'Delivery fees, handling charges, or collection costs may not always be refundable unless the return is caused by Robobbo error.',
           ],
         },
         {
           heading: 'Support and review',
           items: [
             'Every return case is reviewed individually to ensure a fair outcome for both the customer and the store.',
-            'If a product is confirmed to be defective, incorrect, or incomplete on delivery, Robbobo will work to provide a suitable resolution as quickly as possible.',
+            'If a product is confirmed to be defective, incorrect, or incomplete on delivery, Robobbo will work to provide a suitable resolution as quickly as possible.',
             'For help with a current order, customers should use the contact and order-tracking tools available on the website.',
           ],
         },
@@ -281,7 +281,7 @@ export const defaultSiteContent = {
     },
     faq: {
       title: 'Frequently Asked Questions',
-      description: 'Quick answers to common questions about shopping, payments, delivery, accounts, and support on Robbobo.',
+      description: 'Quick answers to common questions about shopping, payments, delivery, accounts, and support on Robobbo.',
       sections: [
         {
           heading: 'Orders and checkout',
@@ -312,7 +312,7 @@ export const defaultSiteContent = {
           items: [
             'How can I track my order? Use the track-order page or your account order history where available.',
             'Can I return a product? Eligible items may be returned according to the store return and refund policy.',
-            'How do I contact Robbobo? Use the contact page or the support options provided across the storefront.',
+            'How do I contact Robobbo? Use the contact page or the support options provided across the storefront.',
           ],
         },
       ],
@@ -328,13 +328,13 @@ export const defaultSiteContent = {
     },
     terms: {
       title: 'Terms of Service',
-      description: 'These terms govern your use of the Robbobo website, your account, and every order placed through the storefront.',
+      description: 'These terms govern your use of the Robobbo website, your account, and every order placed through the storefront.',
       sections: [
         {
-          heading: 'Using Robbobo',
+          heading: 'Using Robobbo',
           items: [
             'You must provide accurate account, delivery, and contact information when using this website.',
-            'You agree to use Robbobo only for lawful shopping, browsing, support, and account-management purposes.',
+            'You agree to use Robobbo only for lawful shopping, browsing, support, and account-management purposes.',
             'You may not misuse the website, attempt unauthorized access, interfere with checkout, or abuse store services.',
           ],
         },
@@ -343,7 +343,7 @@ export const defaultSiteContent = {
           items: [
             'Product descriptions, images, prices, and availability are updated as accurately as possible but may change without prior notice.',
             'Some product images are for presentation only, so packaging, colors, or accessories may vary slightly from the delivered item.',
-            'If a pricing, listing, or availability error is discovered after checkout, Robbobo may contact you to confirm, adjust, or cancel the order.',
+            'If a pricing, listing, or availability error is discovered after checkout, Robobbo may contact you to confirm, adjust, or cancel the order.',
           ],
         },
         {
@@ -358,7 +358,7 @@ export const defaultSiteContent = {
           heading: 'Shipping, returns, and support',
           items: [
             'Delivery estimates are provided in good faith but may be affected by stock movement, courier delays, weather, or high-order periods.',
-            'Returns, exchanges, and refunds are handled according to Robbobo return and support policies in effect at the time of your order.',
+            'Returns, exchanges, and refunds are handled according to Robobbo return and support policies in effect at the time of your order.',
             'Customers should inspect delivered items promptly and report damaged, incorrect, or missing items within the support window provided.',
           ],
         },
@@ -366,8 +366,8 @@ export const defaultSiteContent = {
           heading: 'Accounts, content, and liability',
           items: [
             'You are responsible for maintaining the confidentiality of your account login and for activities carried out through your account.',
-            'All website branding, content, product presentation, and store materials remain the property of Robbobo or the relevant rights holders.',
-            'To the maximum extent allowed by law, Robbobo is not liable for indirect, incidental, or consequential losses arising from use of the site or delays outside reasonable control.',
+            'All website branding, content, product presentation, and store materials remain the property of Robobbo or the relevant rights holders.',
+            'To the maximum extent allowed by law, Robobbo is not liable for indirect, incidental, or consequential losses arising from use of the site or delays outside reasonable control.',
           ],
         },
       ],
@@ -383,7 +383,7 @@ export const defaultSiteContent = {
     },
     cookies: {
       title: 'Cookie Policy',
-      description: 'This page explains how Robbobo uses cookies, browser storage, and session data to support shopping and account features.',
+      description: 'This page explains how Robobbo uses cookies, browser storage, and session data to support shopping and account features.',
       sections: [
         {
           heading: 'What we store',
@@ -412,7 +412,7 @@ export const defaultSiteContent = {
         {
           heading: 'Policy updates',
           items: [
-            'Robbobo may update this policy as site features, account tools, or storage behavior change over time.',
+            'Robobbo may update this policy as site features, account tools, or storage behavior change over time.',
             'The latest version published on this page should be treated as the current cookie and storage guidance for the storefront.',
           ],
         },
@@ -422,11 +422,11 @@ export const defaultSiteContent = {
   authContent: {
     login: {
       badge: 'Sign in',
-      heroTitle: 'Welcome back to Robbobo',
+      heroTitle: 'Welcome back to Robobbo',
       heroSubtitle: 'Sign in to access your orders, saved cart, and account settings.',
-      cardTitle: 'Sign in to Robbobo',
+      cardTitle: 'Sign in to Robobbo',
       cardSubtitle: 'Access your cart, order history, and support centre.',
-      footerPrompt: 'New to Robbobo?',
+      footerPrompt: 'New to Robobbo?',
       footerLinkLabel: 'Create an account',
       highlights: [
         { title: 'Safe and secure shopping', copy: 'Saved carts, tracked orders, and consistent support access.' },
@@ -439,11 +439,11 @@ export const defaultSiteContent = {
     },
     register: {
       badge: 'Create account',
-      heroTitle: 'Join Robbobo',
+      heroTitle: 'Join Robobbo',
       heroSubtitle: 'Create a free account to place orders, track deliveries, and manage your shopping.',
       cardTitle: 'Create your account',
-      cardSubtitle: 'Start shopping at Robbobo in seconds.',
-      termsPrefix: "I agree to Robbobo's",
+      cardSubtitle: 'Start shopping at Robobbo in seconds.',
+      termsPrefix: "I agree to Robobbo's",
       termsLabel: 'Terms of Service',
       privacyLabel: 'Privacy Policy',
       footerPrompt: 'Already have an account?',
@@ -457,7 +457,7 @@ export const defaultSiteContent = {
   },
   productPageContent: {
     freeDeliveryText: 'FREE delivery on orders over GHc500. Estimated 2-5 business days.',
-    whyShopTitle: 'Why shop at Robbobo',
+    whyShopTitle: 'Why shop at Robobbo',
     reasons: [
       { title: 'Secure checkout', copy: 'Protected payments and verified ordering experience.' },
       { title: 'Fast dispatch', copy: 'Orders processed quickly with tracking support.' },
@@ -467,7 +467,7 @@ export const defaultSiteContent = {
     guarantees: ['Secure payments', 'Order tracking updates', 'Support after purchase', 'Genuine products'],
   },
   trackOrderContent: {
-    badge: 'Robbobo delivery',
+    badge: 'Robobbo delivery',
     title: 'Track Your Order',
     subtitle: 'Follow your shipment from confirmation to doorstep delivery with live order details and courier-style progress updates.',
     noOrderTitle: 'No order found',
@@ -478,7 +478,7 @@ export const defaultSiteContent = {
     contactSupportOrderButton: 'Contact support about this order',
     viewAllOrdersButton: 'View all orders',
     carrierNoteLabel: 'Carrier note',
-    carrierNoteText: 'Your order is being handled by Robbobo Delivery',
+    carrierNoteText: 'Your order is being handled by Robobbo Delivery',
     shipmentProgressTitle: 'Shipment progress',
     shipmentActivityTitle: 'Shipment activity',
     itemsTitle: 'Items in this order',
@@ -512,8 +512,8 @@ const isLegacyReturnsPage = (page) => {
 const isLegacyAboutPage = (page) => {
   const headings = Array.isArray(page?.sections) ? page.sections.map((section) => section?.heading) : []
   return (
-    page?.title === 'About Robbobo' &&
-    page?.description === 'Robbobo is a curated B2C storefront redesigned with marketplace-inspired discovery and cleaner category merchandising.' &&
+    page?.title === 'About Robobbo' &&
+    page?.description === 'Robobbo is a curated B2C storefront redesigned with marketplace-inspired discovery and cleaner category merchandising.' &&
     headings.length === 3 &&
     headings[0] === 'What we sell' &&
     headings[1] === 'What changed' &&

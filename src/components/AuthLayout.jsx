@@ -6,10 +6,10 @@ export default function AuthLayout({ children, registering = false }) {
     <main className="shop-auth">
       <div className="shop-auth-frame">
         <aside className="shop-auth-story">
-          <Link to="/" className="shop-auth-logo" aria-label="Robbobo home"><img src="/robbobo%20logo.png" alt="Robbobo" /></Link>
+          <Link to="/" className="shop-auth-logo" aria-label="Robobbo home"><img src="/robbobo%20logo.png" alt="Robobbo" /></Link>
           <div className="shop-auth-story-body">
             <h1>{registering ? 'Your next great find starts here.' : 'Back for something good?'}</h1>
-            <p>{registering ? 'A home refresh, a new look, or something just for you. Make it yours with Robbobo.' : 'Your favourites, your orders, your next discovery. Pick up where you left off.'}</p>
+            <p>{registering ? 'A home refresh, a new look, or something just for you. Make it yours with Robobbo.' : 'Your favourites, your orders, your next discovery. Pick up where you left off.'}</p>
             <ol className="shop-auth-steps">
               <li><span>01</span><strong>{registering ? 'Create your account' : 'Sign in to your account'}</strong></li>
               <li><span>02</span><strong>Find something you love</strong></li>

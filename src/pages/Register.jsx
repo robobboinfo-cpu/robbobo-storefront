@@ -40,7 +40,7 @@ export default function Register() {
   }
 
   return <AuthLayout registering>
-    <header className="shop-auth-heading"><h2>Join the good finds.</h2><p>Create your Robbobo shopping account.</p></header>
+    <header className="shop-auth-heading"><h2>Join the good finds.</h2><p>Create your Robobbo shopping account.</p></header>
     {error && <p className="shop-auth-error" role="alert">{error}</p>}
     <form onSubmit={handleSubmit} className="shop-auth-form">
       <div className="shop-auth-field"><label htmlFor="phone">Phone number</label><div className="shop-auth-phone"><span aria-label="Ghana, country code +233"><span className="shop-auth-flag" aria-hidden="true"></span> +233</span><input id="phone" name="phone" type="tel" autoComplete="tel-national" inputMode="tel" placeholder="24 123 4567" aria-describedby="phone-help" value={phone} onChange={(event) => setPhone(event.target.value)} required /></div><small id="phone-help">Ghana numbers only. You can also enter 024 123 4567.</small></div>
