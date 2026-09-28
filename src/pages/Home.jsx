@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react'
 import ProductCard from '../components/ProductCard'
+import BrandSlideshow from '../components/BrandSlideshow'
 import { useSiteContent } from '../context/SiteContentContext'
 import { useProducts } from '../context/ProductContext'
 import { productMatchesCategory } from '../lib/productCategories'
@@ -101,6 +102,8 @@ const Home = () => {
           <button type="button" className="amazon-hero-arrow right" aria-label="Next banner" disabled={heroSlides.length < 2} onClick={() => setActiveSlide((c) => (c + 1) % heroSlides.length)}><ChevronRight size={25} aria-hidden="true" /></button>
         </div>
       </section>
+
+      <BrandSlideshow brands={homeContent.brands} />
 
       <div className="page-shell storefront-home">
         <section className="storefront-welcome">
