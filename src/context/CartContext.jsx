@@ -68,8 +68,7 @@ export const CartProvider = ({ children }) => {
   const clearCart = () => setCartItems([])
 
   const cartTotal = cartItems.reduce((sum, item) => sum + (parseFloat(item.price) || 0) * (parseInt(item.quantity) || 0), 0)
-  // The header badge represents distinct products, not the total unit quantity.
-  const cartCount = cartItems.length
+  const cartCount = cartItems.reduce((sum, item) => sum + (parseInt(item.quantity, 10) || 0), 0)
 
   return (
     <CartContext.Provider value={{
