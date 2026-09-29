@@ -7,6 +7,7 @@ import { useSiteContent } from '../context/SiteContentContext'
 import { useProducts } from '../context/ProductContext'
 import { productMatchesCategory } from '../lib/productCategories'
 import { supabase } from '../lib/supabase'
+import { brandText } from '../lib/brandText'
 
 const categoryImageFallback = 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=900&h=700&fit=crop&q=85'
 
@@ -20,10 +21,10 @@ const featuredDepartments = [
 
 const normalizeBanner = (banner, fallbackImage) => ({
   id: banner.id,
-  title: banner.title || 'Shop Robobbo',
-  subtitle: banner.subtitle || '',
+  title: brandText(banner.title || 'Shop Robobbo'),
+  subtitle: brandText(banner.subtitle || ''),
   image: banner.image_url || fallbackImage,
-  buttonText: banner.button_text || 'Shop now',
+  buttonText: brandText(banner.button_text || 'Shop now'),
   targetUrl: banner.target_url || '/products',
   sortOrder: Number(banner.sort_order || 0),
 })

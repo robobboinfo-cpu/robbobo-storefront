@@ -1,3 +1,5 @@
+import { brandText } from './brandText.js'
+
 const searchPath = (label) => `/products?search=${encodeURIComponent(label)}`
 
 const footerDefaults = [
@@ -108,7 +110,7 @@ const normalizeItem = (item) => ({
   id: item.id,
   kind: item.kind || 'subnav',
   parent_id: item.parent_id || null,
-  label: item.label || 'Menu item',
+  label: brandText(item.label || 'Menu item'),
   path: item.path || '',
   sort_order: Number(item.sort_order || 0),
   is_active: item.is_active !== false,

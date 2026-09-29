@@ -1,3 +1,5 @@
+import { normalizeBrandContent } from './brandText.js';
+
 export const defaultSiteContent = {
   storeBrand: {
     name: "Robobbo",
@@ -1082,7 +1084,7 @@ const mergePanelSets = (panels) => {
   return [...mergedPanels, ...extras];
 };
 
-export const normalizeSiteContent = (value) => ({
+export const normalizeSiteContent = (value) => normalizeBrandContent({
   ...defaultSiteContent,
   ...value,
   storeBrand: {
