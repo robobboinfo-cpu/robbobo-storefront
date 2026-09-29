@@ -10,7 +10,7 @@ const defaultSizes = ['S', 'M', 'L', 'XL', 'XXL']
 const ProductDetail = () => {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { addToCart } = useContext(CartContext)
+  const { addToCart, notifyCart } = useContext(CartContext)
   const { products, getProductById, loading } = useProducts()
   const product = getProductById(id)
   const [quantity, setQuantity] = useState(1)
@@ -19,6 +19,11 @@ const ProductDetail = () => {
   const [selectedSize, setSelectedSize] = useState('M')
   const [activeTab, setActiveTab] = useState('Details')
   const [wishlisted, setWishlisted] = useState(false)
+  const selectQuantity = (nextQuantity) => {
+    if (nextQuantity < 1 || nextQuantity === quantity) return
+    setQuantity(nextQuantity)
+    notifyCart(`Quantity selected: ${nextQuantity}. Add to cart to apply.`)
+  }
 
   const related = useMemo(() => {
     if (!product) return []
@@ -92,7 +97,7 @@ const ProductDetail = () => {
           </div>}
 
           <div className="pdp-quantity"><span>Quantity</span><div className="pdp-qty-control">
-            <button type="button" onClick={() => setQuantity((value) => Math.max(1, value - 1))}>−</button><strong>{quantity}</strong><button type="button" onClick={() => setQuantity((value) => value + 1)}>+</button>
+            <button type="button" aria-label="Decrease quantity" disabled={quantity === 1} onClick={() => selectQuantity(quantity - 1)}>−</button><strong>{quantity}</strong><button type="button" aria-label="Increase quantity" onClick={() => selectQuantity(quantity + 1)}>+</button>
           </div></div>
 
           <div className="pdp-actions">

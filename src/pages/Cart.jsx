@@ -54,9 +54,9 @@ const Cart = () => {
                     <span className="supporting-text">SKU #{item.id}</span>
                   </div>
                   <div className="qty-stepper">
-                    <button type="button" onClick={() => updateQuantity(item.id, Math.max(1, item.quantity - 1))}><Minus size={14} /></button>
+                    <button type="button" aria-label={`Decrease quantity of ${item.name}`} disabled={item.quantity <= 1} onClick={() => updateQuantity(item.id, item.quantity - 1)}><Minus size={14} /></button>
                     <strong>{item.quantity}</strong>
-                    <button type="button" onClick={() => updateQuantity(item.id, item.quantity + 1)}><Plus size={14} /></button>
+                    <button type="button" aria-label={`Increase quantity of ${item.name}`} onClick={() => updateQuantity(item.id, item.quantity + 1)}><Plus size={14} /></button>
                   </div>
                 </div>
                 <div className="page-grid" style={{ gap: 10, justifyItems: 'end' }}>

@@ -5625,4 +5625,42 @@ body {
   }
 }
 .catalog-scroll-sentinel { height: 1px; }
+.cart-confirmation-region {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 1000;
+  pointer-events: none;
+}
+.cart-confirmation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 10px 56px;
+  padding-top: max(10px, env(safe-area-inset-top));
+  color: #fff;
+  background: #00875a;
+  box-shadow: 0 3px 12px #0002;
+  font-size: 15px;
+  font-weight: 600;
+  text-align: center;
+}
+.cart-confirmation > svg { flex-shrink: 0; }
+.cart-confirmation button {
+  position: absolute;
+  right: 8px;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  color: #fff;
+  background: transparent;
+  cursor: pointer;
+  pointer-events: auto;
+}
+.cart-confirmation button:hover { background: #ffffff26; }
+.cart-confirmation button:focus-visible { outline: 2px solid #fff; outline-offset: -4px; }
 .catalog-screen-reader-status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
