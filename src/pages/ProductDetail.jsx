@@ -74,7 +74,10 @@ const ProductDetail = () => {
             {product.oldPrice ? <del>GHc{product.oldPrice.toFixed(2)}</del> : null}
             {discount ? <span>{discount}% OFF</span> : null}
           </div>
-          <p className="pdp-lead">{product.description}</p>
+          <div className="pdp-lead">
+            <p className="product-description-copy pdp-description-preview">{product.description}</p>
+            {product.description && <a className="pdp-description-link" href="#product-details" onClick={() => setActiveTab('Details')}>Read full description</a>}
+          </div>
 
           {colors.length > 0 && <div className="pdp-option-block">
             <div className="pdp-option-heading"><strong>Color</strong><span>Option {selectedColor + 1}</span></div>
@@ -104,10 +107,10 @@ const ProductDetail = () => {
         </div>
       </section>
 
-      <section className="pdp-details">
+      <section className="pdp-details" id="product-details">
         <div className="pdp-detail-copy">
           <div className="pdp-tabs" role="tablist">{tabs.map((tab) => <button key={tab} type="button" className={activeTab === tab ? 'active' : ''} onClick={() => setActiveTab(tab)}>{tab}</button>)}</div>
-          <p>{tabCopy[activeTab]}</p>
+          <p className="product-description-copy">{tabCopy[activeTab]}</p>
           {activeTab === 'Details' && specs.length > 0 && <ul className="pdp-feature-list">{specs.slice(0, 6).map(([key, value]) => <li key={key}><Check size={15} /><span><strong>{key.replace(/_/g, ' ')}:</strong> {value}</span></li>)}</ul>}
         </div>
         <div className="pdp-detail-image"><img src={images[1] || product.image} alt={`${product.name} detail`} /></div>

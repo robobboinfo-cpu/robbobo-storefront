@@ -172,6 +172,25 @@
   line-height: 1.65;
 }
 
+.pdp-description-preview {
+  margin: 0;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 5;
+  overflow: hidden;
+}
+
+.pdp-description-link {
+  display: inline-block;
+  margin-top: 10px;
+  color: var(--alibaba-ink);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+#product-details { scroll-margin-top: 180px; }
+
 .pdp-option-block {
   margin-top: 20px;
 }
@@ -3276,6 +3295,13 @@ img {
 }
 
 .amz-mega-section-heading {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
   font-size: 0.9rem;
   font-weight: 800;
   color: #0f1111;
@@ -3528,12 +3554,23 @@ img {
 }
 
 .amazon-mobile-drawer-subgroup-title {
+  text-align: left;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
   margin: 0;
   font-size: 0.84rem;
   font-weight: 800;
   color: #111827;
   text-transform: uppercase;
   letter-spacing: 0.08em;
+}
+
+.amz-mega-section-heading:hover,
+.amazon-mobile-drawer-subgroup-title:hover {
+  color: #c45500;
+  text-decoration: underline;
 }
 
 .amazon-mobile-drawer-subgroup-links {

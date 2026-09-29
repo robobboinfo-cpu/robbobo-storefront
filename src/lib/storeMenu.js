@@ -131,6 +131,13 @@ const resolveMenuPaths = (items = []) => {
       return { ...item, path: `/category/${encodeURIComponent(item.label)}` }
     }
 
+    if (item.kind === 'mega_section') {
+      const department = byId.get(item.parent_id)
+      if (department?.label) {
+        return { ...item, path: `/category/${encodeURIComponent(department.label)}?section=${encodeURIComponent(item.id)}` }
+      }
+    }
+
     if (item.kind === 'mega_link' && item.label) {
       const section = byId.get(item.parent_id)
       const department = section ? byId.get(section.parent_id) : null

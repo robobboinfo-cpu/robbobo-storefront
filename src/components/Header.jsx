@@ -301,7 +301,7 @@ const Header = () => {
                 {activeSections.length > 0 ? (
                   activeSections.map((section) => (
                     <div key={section.id || section.label} className="amz-mega-section">
-                      <div className="amz-mega-section-heading">{section.label}</div>
+                      <button type="button" className="amz-mega-section-heading" onClick={() => { navigate(section.path); closeMega() }}>{section.label}</button>
                       {section.items.map((item) => (
                         <button
                           key={item.id || item.label}
@@ -485,7 +485,7 @@ const Header = () => {
 
                     {mobileDepartment.sections.map((section) => (
                       <div key={section.id} className="amazon-mobile-drawer-subgroup">
-                        <p className="amazon-mobile-drawer-subgroup-title">{section.label}</p>
+                        <button type="button" className="amazon-mobile-drawer-subgroup-title" onClick={() => { navigate(section.path); closeMega() }}>{section.label}</button>
                         <div className="amazon-mobile-drawer-subgroup-links">
                           {section.items.map((item) => (
                             <button

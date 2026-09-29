@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { useProducts } from '../context/ProductContext'
 import InfiniteProductGrid from '../components/InfiniteProductGrid'
 import { buildMenuTree, defaultStoreMenuItems, fetchStoreMenuItems } from '../lib/storeMenu'
@@ -80,13 +80,22 @@ export const ListingPage = ({ title, subtitle, products, chips = [], loading = f
 
 const CategoryPage = () => {
   const { category } = useParams()
+  const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const { products, loading } = useProducts()
   const [menuItems, setMenuItems] = useState(defaultStoreMenuItems)
+  const [menuLoading, setMenuLoading] = useState(true)
   const decodedCategory = decodeURIComponent(category)
   const menuTree = useMemo(() => buildMenuTree(menuItems), [menuItems])
   const departmentSubcategoryMap = useMemo(() => buildDepartmentSubcategoryMap(menuTree.departments), [menuTree.departments])
-  const categoryProducts = products.filter((product) => productMatchesCategory(product, decodedCategory, departmentSubcategoryMap))
+  const sectionId = searchParams.get('section')
+  const department = menuTree.departments.find((item) => item.label === decodedCategory)
+  const section = department?.sections.find((item) => item.id === sectionId)
+  const sectionSubcategories = new Set((section?.items || []).map((item) => item.label))
+  const categoryProducts = products.filter((product) => (
+    productMatchesCategory(product, decodedCategory, departmentSubcategoryMap)
+    && (!sectionId || sectionSubcategories.has(product.subcategory))
+  ))
   const subcategories = [...new Set(categoryProducts.map((product) => product.subcategory).filter(Boolean))]
 
   useEffect(() => {
@@ -96,6 +105,8 @@ const CategoryPage = () => {
         setMenuItems(data || defaultStoreMenuItems)
       } catch {
         setMenuItems(defaultStoreMenuItems)
+      } finally {
+        setMenuLoading(false)
       }
     }
 
@@ -104,11 +115,11 @@ const CategoryPage = () => {
 
   return (
     <ListingPage
-      key={category}
-      loading={loading}
-      title={decodedCategory}
-      subtitle={`Discover ${decodedCategory} listings arranged in a high-density marketplace layout with direct retail purchase flow.`}
-      products={categoryProducts}
+      key={`${category}-${sectionId || ''}`}
+      loading={loading || menuLoading}
+      title={sectionId ? (section?.label || (menuLoading ? 'Loading section...' : 'Section not found')) : decodedCategory}
+      subtitle={sectionId ? `Shop products from all subcategories in ${section?.label || 'this section'} of ${decodedCategory}.` : `Discover ${decodedCategory} listings arranged in a high-density marketplace layout with direct retail purchase flow.`}
+      products={menuLoading ? [] : categoryProducts}
       chips={subcategories.map((subcategory) => ({ label: subcategory, onClick: () => navigate(`/category/${encodeURIComponent(decodedCategory)}/subcategory/${encodeURIComponent(subcategory)}`) }))}
     />
   )
