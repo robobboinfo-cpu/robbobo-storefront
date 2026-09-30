@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useRef } from 'react'
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 import PaystackPop from '@paystack/inline-js'
-import { Banknote, CreditCard } from 'lucide-react'
+import { CreditCard } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { saveLocalOrder } from '../lib/localOrderStore'
 import { useCart } from '../context/CartContext'
@@ -10,7 +10,6 @@ import { useAuth } from '../context/AuthContext'
 
 const buildOrderNumber = () => `RBB-${Date.now().toString().slice(-8)}`
 const isUuid = (value) => /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(String(value || ''))
-const isOrdersRlsError = (error) => error?.code === '42501' || /row-level security policy/i.test(error?.message || '')
 
 const Checkout = () => {
   const navigate = useNavigate()
@@ -35,7 +34,6 @@ const Checkout = () => {
   const [orderComplete, setOrderComplete] = useState(null)
   const [error, setError] = useState('')
   const [savedLocallyNotice, setSavedLocallyNotice] = useState(false)
-  const [paymentMethod, setPaymentMethod] = useState('paystack')
   const [verifyingPayment, setVerifyingPayment] = useState(isPaymentReturn)
   const verificationStarted = useRef(false)
 
@@ -136,7 +134,7 @@ const Checkout = () => {
       total,
       status: 'processing',
       payment_status: 'pending',
-      payment_method: 'cash_on_delivery',
+      payment_method: 'paystack',
       shipping_method: 'standard',
       estimated_delivery: estimatedDelivery,
       shipping_address: { ...formData, email: orderEmail },
@@ -144,70 +142,45 @@ const Checkout = () => {
     }
 
     try {
-      if (paymentMethod === 'paystack') {
-        const initializeResponse = await fetch('/api/paystack/initialize', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: orderEmail, items: cartItems.map(({ id, quantity }) => ({ id, quantity })) }),
-        })
-        const payment = await initializeResponse.json().catch(() => null)
-        if (!payment) throw new Error('The Paystack payment service is unavailable. Run the app with Vercel Dev or use the deployed site.')
-        if (!initializeResponse.ok || !payment.access_code) throw new Error(payment.error || 'Unable to start Paystack checkout.')
-        if (payment.amount !== Math.round(total * 100)) throw new Error('Payment total does not match the order total.')
-        const pendingRaw = JSON.stringify({ reference: payment.reference, order: { ...orderPayload, payment_method: 'paystack' } })
-        window.sessionStorage.setItem('robbobo_pending_paystack_order', pendingRaw)
+      const initializeResponse = await fetch('/api/paystack/initialize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: orderEmail, items: cartItems.map(({ id, quantity }) => ({ id, quantity })) }),
+      })
+      const payment = await initializeResponse.json().catch(() => null)
+      if (!payment) throw new Error('The Paystack payment service is unavailable. Run the app with Vercel Dev or use the deployed site.')
+      if (!initializeResponse.ok || !payment.access_code) throw new Error(payment.error || 'Unable to start Paystack checkout.')
+      if (payment.amount !== Math.round(total * 100)) throw new Error('Payment total does not match the order total.')
+      const pendingRaw = JSON.stringify({ reference: payment.reference, order: { ...orderPayload, payment_method: 'paystack' } })
+      window.sessionStorage.setItem('robbobo_pending_paystack_order', pendingRaw)
 
-        const popup = new PaystackPop()
-        popup.resumeTransaction(payment.access_code, {
-          onSuccess: async (transaction) => {
-            setPlacingOrder(true)
-            setVerifyingPayment(true)
-            setError('')
-            try {
-              await completePaystackOrder(transaction.reference || payment.reference, pendingRaw)
-            } catch (caughtError) {
-              setError(caughtError?.message || 'Unable to verify payment.')
-            } finally {
-              setVerifyingPayment(false)
-              setPlacingOrder(false)
-            }
-          },
-          onCancel: () => {
-            setError('Payment was cancelled. Your cart has not been changed.')
+      const popup = new PaystackPop()
+      popup.resumeTransaction(payment.access_code, {
+        onSuccess: async (transaction) => {
+          setPlacingOrder(true)
+          setVerifyingPayment(true)
+          setError('')
+          try {
+            await completePaystackOrder(transaction.reference || payment.reference, pendingRaw)
+          } catch (caughtError) {
+            setError(caughtError?.message || 'Unable to verify payment.')
+          } finally {
+            setVerifyingPayment(false)
             setPlacingOrder(false)
-          },
-          onError: (paystackError) => {
-            setError(paystackError?.message || 'Paystack could not complete the payment.')
-            setPlacingOrder(false)
-          },
-        })
-        return
-      }
-
-      const { data, error: supabaseError } = await supabase.from('orders').insert([orderPayload]).select().single()
-      if (supabaseError) {
-        console.error('[Checkout] Supabase order insert failed:', supabaseError.message, supabaseError)
-        if (isOrdersRlsError(supabaseError)) {
-          console.warn('[Checkout] Orders policy fix required: apply SUPABASE_LIVE_ORDERS_FIX.sql in Supabase.')
-        }
-      }
-      const saved = supabaseError ? { ...orderPayload, saved_locally: true } : data
-      saveLocalOrder(saved)
-      clearCart()
-      setOrderComplete(saved)
-      setSavedLocallyNotice(Boolean(supabaseError))
+          }
+        },
+        onCancel: () => {
+          setError('Payment was cancelled. Your cart has not been changed.')
+          setPlacingOrder(false)
+        },
+        onError: (paystackError) => {
+          setError(paystackError?.message || 'Paystack could not complete the payment.')
+          setPlacingOrder(false)
+        },
+      })
     } catch (caughtError) {
       console.error('[Checkout] Unexpected order error:', caughtError)
-      if (paymentMethod === 'paystack') {
-        setError(caughtError?.message || 'Unable to start Paystack checkout. Please try again.')
-        return
-      }
-      const fallbackOrder = { ...orderPayload, saved_locally: true }
-      saveLocalOrder(fallbackOrder)
-      clearCart()
-      setOrderComplete(fallbackOrder)
-      setSavedLocallyNotice(true)
-      setError(caughtError?.message || '')
+      setError(caughtError?.message || 'Unable to start Paystack checkout. Please try again.')
     } finally {
       setPlacingOrder(false)
     }
@@ -347,19 +320,14 @@ const Checkout = () => {
 
             <fieldset className="summary-card checkout-payment-methods">
               <h2>Payment method</h2>
-              <label className={`checkout-payment-option ${paymentMethod === 'paystack' ? 'active' : ''}`}>
-                <input type="radio" name="paymentMethod" value="paystack" checked={paymentMethod === 'paystack'} onChange={(event) => setPaymentMethod(event.target.value)} />
+              <label className="checkout-payment-option active">
+                <input type="radio" name="paymentMethod" value="paystack" checked readOnly />
                 <span className="checkout-payment-icon"><CreditCard size={20} /></span>
                 <span className="checkout-payment-copy"><strong>Paystack</strong><small>Card, mobile money, bank and other available methods</small></span>
               </label>
-              <label className={`checkout-payment-option ${paymentMethod === 'cash_on_delivery' ? 'active' : ''}`}>
-                <input type="radio" name="paymentMethod" value="cash_on_delivery" checked={paymentMethod === 'cash_on_delivery'} onChange={(event) => setPaymentMethod(event.target.value)} />
-                <span className="checkout-payment-icon"><Banknote size={20} /></span>
-                <span className="checkout-payment-copy"><strong>Cash on delivery</strong><small>Pay when your order arrives</small></span>
-              </label>
             </fieldset>
             <button type="button" className="btn-secondary" style={{ width: '100%', padding: '14px', fontSize: '1rem', borderRadius: 8 }} onClick={placeOrder} disabled={placingOrder}>
-              {placingOrder ? (paymentMethod === 'paystack' ? 'Connecting to Paystack...' : 'Placing order...') : (paymentMethod === 'paystack' ? `Pay GHc${total.toFixed(2)} with Paystack` : 'Place order')}
+              {placingOrder ? 'Connecting to Paystack...' : `Pay GHc${total.toFixed(2)} with Paystack`}
             </button>
             <div className="info-card">
               <div className="supporting-text">Paystack payments are verified securely before your order is confirmed. Your secret payment credentials never pass through Robobbo.</div>

@@ -19,11 +19,17 @@ const featuredDepartments = [
   { key: 'gaming', title: 'Gaming gear', copy: 'Make your next session a good one.', image: '/images/featured/gaming.jpg', search: 'gaming' },
 ]
 
+// Replace only these legacy artworks; newly uploaded admin banners remain authoritative.
+const correctedBannerImages = {
+  'https://gaoajmtnbbalxtgcugzw.supabase.co/storage/v1/object/public/product-images/banners/1788404808740-jumia-style.png': '/images/banners/robobbo-shop-smart.png',
+  'https://gaoajmtnbbalxtgcugzw.supabase.co/storage/v1/object/public/product-images/banners/1788402352500-robb-ig-canvas.png': '/images/banners/robobbo-online-shopping.png',
+}
+
 const normalizeBanner = (banner, fallbackImage) => ({
   id: banner.id,
   title: brandText(banner.title || 'Shop Robobbo'),
   subtitle: brandText(banner.subtitle || ''),
-  image: banner.image_url || fallbackImage,
+  image: correctedBannerImages[banner.image_url] || banner.image_url || fallbackImage,
   buttonText: brandText(banner.button_text || 'Shop now'),
   targetUrl: banner.target_url || '/products',
   sortOrder: Number(banner.sort_order || 0),
