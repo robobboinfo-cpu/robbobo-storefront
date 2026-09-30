@@ -47,16 +47,35 @@ const StorefrontActivityTracker = () => {
     const visitorToken = ensureToken(VISITOR_KEY)
     const sessionToken = ensureToken(SESSION_KEY)
 
-    supabase.from('storefront_visits').insert([{
+    const recordVisit = async () => {
+      let geo = {}
+      try {
+        const response = await fetch('/api/visitor-context', { cache: 'no-store', signal: AbortSignal.timeout(4000) })
+        if (response.ok) geo = await response.json()
+      } catch { /* Still record the visit when location is unavailable. */ }
+
+      // Versioned context in the existing text column keeps old visit records
+      // readable and avoids requiring a schema change before tracking can work.
+      const userAgent = JSON.stringify({
+        version: 1,
+        userAgent: navigator.userAgent || '',
+        touchPoints: navigator.maxTouchPoints || 0,
+        city: typeof geo.city === 'string' ? geo.city : '',
+        region: typeof geo.region === 'string' ? geo.region : '',
+        country: typeof geo.country === 'string' ? geo.country : '',
+      })
+      await supabase.from('storefront_visits').insert([{
       page_path: path,
       page_title: document.title || 'Robobbo',
       visitor_token: visitorToken,
       session_token: sessionToken,
       user_email: currentUser?.email || null,
       referrer: document.referrer || null,
-      user_agent: navigator.userAgent || null,
+      user_agent: userAgent,
       created_at: new Date().toISOString(),
-    }]).then(() => {}).catch(() => {})
+      }])
+    }
+    recordVisit().catch(() => {})
   }, [currentUser?.email, location.pathname, location.search])
 
   return null
