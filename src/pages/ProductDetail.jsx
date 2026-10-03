@@ -3,6 +3,8 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { Check, Heart, RotateCcw, ShieldCheck, ShoppingBag, Truck } from 'lucide-react'
 import { CartContext } from '../context/CartContext'
 import { useProducts } from '../context/ProductContext'
+import ProductDescription from '../components/ProductDescription'
+import { descriptionPreview } from '../lib/productDescription'
 
 const hiddenSpecs = new Set(['stock', 'stock_count', 'inventory', 'quantity', 'qty', 'remaining', 'available_stock'])
 const defaultSizes = ['S', 'M', 'L', 'XL', 'XXL']
@@ -80,7 +82,7 @@ const ProductDetail = () => {
             {discount ? <span>{discount}% OFF</span> : null}
           </div>
           <div className="pdp-lead">
-            <p className="product-description-copy pdp-description-preview">{product.description}</p>
+            <p className="product-description-copy pdp-description-preview">{descriptionPreview(product.description)}</p>
             {product.description && <a className="pdp-description-link" href="#product-details" onClick={() => setActiveTab('Details')}>Read full description</a>}
           </div>
 
@@ -115,7 +117,7 @@ const ProductDetail = () => {
       <section className="pdp-details" id="product-details">
         <div className="pdp-detail-copy">
           <div className="pdp-tabs" role="tablist">{tabs.map((tab) => <button key={tab} type="button" className={activeTab === tab ? 'active' : ''} onClick={() => setActiveTab(tab)}>{tab}</button>)}</div>
-          <p className="product-description-copy">{tabCopy[activeTab]}</p>
+          <div className="product-description-copy"><ProductDescription value={tabCopy[activeTab]} /></div>
           {activeTab === 'Details' && specs.length > 0 && <ul className="pdp-feature-list">{specs.slice(0, 6).map(([key, value]) => <li key={key}><Check size={15} /><span><strong>{key.replace(/_/g, ' ')}:</strong> {value}</span></li>)}</ul>}
         </div>
         <div className="pdp-detail-image"><img src={images[1] || product.image} alt={`${product.name} detail`} /></div>

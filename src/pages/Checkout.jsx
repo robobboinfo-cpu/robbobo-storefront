@@ -137,7 +137,10 @@ const Checkout = () => {
       payment_method: 'paystack',
       shipping_method: 'standard',
       estimated_delivery: estimatedDelivery,
-      shipping_address: { ...formData, email: orderEmail },
+      shipping_address: { ...formData, email: orderEmail, order_context: {
+        source: 'website',
+        device: /ipad|tablet|kindle|silk/i.test(navigator.userAgent) || (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1) ? 'tablet' : /mobi|iphone|android/i.test(navigator.userAgent) ? 'mobile' : 'desktop',
+      } },
       created_at: new Date().toISOString(),
     }
 
