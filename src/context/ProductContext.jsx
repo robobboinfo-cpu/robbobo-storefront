@@ -24,6 +24,7 @@ const fetchCatalog = () => {
 // Maps exact Supabase column names to the shape the app expects
 const normalize = (p) => ({
   id: p.id,
+  createdAt: p.created_at || null,
   name: p.name || '',
   price: parseFloat(p.price) || 0,
   oldPrice: parseFloat(p.old_price) || null,

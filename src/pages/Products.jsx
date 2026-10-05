@@ -7,6 +7,7 @@ import { buildMenuTree, defaultStoreMenuItems, fetchStoreMenuItems } from '../li
 import { selectDealProducts } from '../lib/dealProducts'
 import { supabase } from '../lib/supabase'
 import { buildDepartmentSubcategoryMap, productMatchesCategory } from '../lib/productCategories'
+import { newestProductsFirst } from '../lib/productSorting'
 
 export default function ProductsPage() {
   const [searchParams] = useSearchParams()
@@ -64,7 +65,7 @@ function ProductsListing() {
         list.sort((a, b) => (b.rating || 0) - (a.rating || 0))
         break
       case 'newest':
-        list.sort((a, b) => Number(b.id) - Number(a.id))
+        list = newestProductsFirst(list)
         break
       default:
         if (dealsOnly && !list.some((product) => product.oldPrice > product.price)) list.sort((a, b) => a.price - b.price)

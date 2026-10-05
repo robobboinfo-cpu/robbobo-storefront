@@ -4045,6 +4045,19 @@ body {
 .storefront-section + .storefront-section {
   margin-top: 46px;
 }
+.storefront-new-arrivals .products-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+@media (min-width: 1200px) {
+  .storefront-new-arrivals .products-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+}
+@media (max-width: 600px) {
+  .storefront-new-arrivals .products-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
 .storefront-heading {
   display: flex;
   align-items: center;
