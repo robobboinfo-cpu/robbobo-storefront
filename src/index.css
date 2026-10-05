@@ -86,8 +86,7 @@
   border: 2px solid var(--alibaba-navy);
 }
 .pdp-thumb img,
-.pdp-main-image img,
-.pdp-detail-image img {
+.pdp-main-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -338,12 +337,19 @@
 }
 
 .pdp-details {
-  display: grid;
-  grid-template-columns: minmax(0, 0.95fr) minmax(360px, 1.05fr);
-  gap: clamp(38px, 7vw, 100px);
   margin-top: 58px;
   padding-top: 28px;
   border-top: 1px solid var(--alibaba-line);
+}
+
+.pdp-detail-copy {
+  width: min(100%, 1000px);
+  margin-inline: auto;
+  min-width: 0;
+}
+
+.pdp-detail-copy > .product-description-copy {
+  margin-top: 24px;
 }
 
 .pdp-tabs {
@@ -396,15 +402,6 @@
 .pdp-feature-list strong {
   text-transform: capitalize;
   color: var(--alibaba-ink);
-}
-.pdp-detail-image {
-  min-height: 420px;
-  overflow: hidden;
-  border-radius: 12px;
-  background: #f2f3f5;
-}
-.pdp-detail-image img {
-  object-fit: contain;
 }
 
 .pdp-related {
@@ -499,9 +496,6 @@
   .pdp-main-image {
     min-height: 520px;
   }
-  .pdp-details {
-    grid-template-columns: 1fr;
-  }
   .pdp-related-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -541,9 +535,6 @@
   .pdp-tabs {
     gap: 20px;
     overflow-x: auto;
-  }
-  .pdp-detail-image {
-    min-height: 320px;
   }
 }
 

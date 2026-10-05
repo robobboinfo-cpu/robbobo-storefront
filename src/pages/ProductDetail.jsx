@@ -122,7 +122,6 @@ const ProductDetailContent = ({ id }) => {
           <div className="product-description-copy"><ProductDescription value={tabCopy[activeTab]} /></div>
           {activeTab === 'Details' && specs.length > 0 && <ul className="pdp-feature-list">{specs.slice(0, 6).map(([key, value]) => <li key={key}><Check size={15} /><span><strong>{key.replace(/_/g, ' ')}:</strong> {value}</span></li>)}</ul>}
         </div>
-        <div className="pdp-detail-image"><img src={images[1] || product.image} alt={`${product.name} detail`} /></div>
       </section>
 
       {related.length > 0 && <section className="pdp-related">
