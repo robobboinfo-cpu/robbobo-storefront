@@ -475,6 +475,22 @@
   font-size: 0.78rem;
 }
 
+/* Keep the desktop gallery visible beside longer product option panels. */
+@media (min-width: 901px) and (min-height: 500px) {
+  .pdp-gallery {
+    position: sticky;
+    top: 114px;
+  }
+  .pdp-main-image {
+    min-height: 0;
+    height: min(680px, calc(100dvh - 138px));
+  }
+  .pdp-thumb {
+    height: min(100px, calc((100dvh - 186px) / 5));
+    aspect-ratio: auto;
+  }
+}
+
 @media (max-width: 900px) {
   .pdp-hero {
     grid-template-columns: 1fr;
