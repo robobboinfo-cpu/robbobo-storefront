@@ -1,9 +1,12 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { MapPin, ShoppingCart, Star } from 'lucide-react'
 import { useCart } from '../context/CartContext'
+import { getProductOptions } from '../lib/productOptions'
 
 const ProductCard = ({ product }) => {
   const { addToCart } = useCart()
+  const navigate = useNavigate()
+  const hasOptions = getProductOptions(product).length > 0
   const rating = product.rating || 4.5
 
   return (
@@ -33,9 +36,9 @@ const ProductCard = ({ product }) => {
         </div>
       </Link>
 
-      <button type="button" className="product-card-add" onClick={() => addToCart(product, 1)}>
+      <button type="button" className="product-card-add" onClick={() => hasOptions ? navigate(`/product/${product.id}`) : addToCart(product, 1)}>
         <ShoppingCart size={16} />
-        Add to cart
+        {hasOptions ? 'Choose options' : 'Add to cart'}
       </button>
     </article>
   )

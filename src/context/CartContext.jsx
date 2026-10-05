@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { Check, X } from 'lucide-react'
+import { cartItemKey, getProductOptions, validateProductSelection } from '../lib/productOptions'
 
 export const CartContext = createContext()
 
@@ -30,28 +31,34 @@ export const CartProvider = ({ children }) => {
     }
   }, [cartItems])
 
-  const addToCart = (product, quantity = 1) => {
+  const addToCart = (product, quantity = 1, selectedOptions = product.selectedOptions || {}) => {
+    if (getProductOptions(product).length) {
+      const error = validateProductSelection(product, selectedOptions)
+      if (error) { notifyCart(error); return }
+    }
+    const newItem = { ...product, selectedOptions: { ...selectedOptions }, quantity }
+    const key = cartItemKey(newItem)
     setCartItems(prev => {
-      const existing = prev.find(item => item.id === product.id)
+      const existing = prev.find(item => cartItemKey(item) === key)
       if (existing) {
         return prev.map(item =>
-          item.id === product.id
+          cartItemKey(item) === key
             ? { ...item, quantity: item.quantity + quantity }
             : item
         )
       }
-      return [...prev, { ...product, quantity }]
+      return [...prev, newItem]
     })
     notifyCart('Product added to cart successfully.')
   }
 
   const removeFromCart = (productId) => {
-    setCartItems(prev => prev.filter(item => item.id !== productId))
+    setCartItems(prev => prev.filter(item => cartItemKey(item) !== String(productId)))
     notifyCart('Product removed from cart.')
   }
 
   const updateQuantity = (productId, quantity) => {
-    const item = cartItems.find(item => item.id === productId)
+    const item = cartItems.find(item => cartItemKey(item) === String(productId))
     if (!item || item.quantity === quantity) return
     if (quantity <= 0) {
       removeFromCart(productId)
@@ -59,7 +66,7 @@ export const CartProvider = ({ children }) => {
     }
     setCartItems(prev =>
       prev.map(item =>
-        item.id === productId ? { ...item, quantity } : item
+        cartItemKey(item) === String(productId) ? { ...item, quantity } : item
       )
     )
     notifyCart(`Cart quantity updated to ${quantity}.`)

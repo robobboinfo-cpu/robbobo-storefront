@@ -1,4 +1,5 @@
-﻿import { useMemo, useState } from 'react'
+import { cartItemKey, optionSummary } from '../lib/productOptions'
+import { useMemo, useState } from 'react'
 import { useCallback, useEffect, useRef } from 'react'
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 import PaystackPop from '@paystack/inline-js'
@@ -126,6 +127,7 @@ const Checkout = () => {
         image: item.image,
         price: item.price,
         quantity: item.quantity,
+        selectedOptions: item.selectedOptions || {},
         subtotal: Number((item.price * item.quantity).toFixed(2)),
       })),
       subtotal: Number(cartTotal.toFixed(2)),
@@ -148,7 +150,7 @@ const Checkout = () => {
       const initializeResponse = await fetch('/api/paystack/initialize', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: orderEmail, items: cartItems.map(({ id, quantity }) => ({ id, quantity })) }),
+        body: JSON.stringify({ email: orderEmail, items: cartItems.map(({ id, quantity, selectedOptions }) => ({ id, quantity, selectedOptions: selectedOptions || {} })) }),
       })
       const payment = await initializeResponse.json().catch(() => null)
       if (!payment) throw new Error('The Paystack payment service is unavailable. Run the app with Vercel Dev or use the deployed site.')
@@ -298,12 +300,13 @@ const Checkout = () => {
               <h2 style={{ margin: 0, color: '#222' }}>Order summary</h2>
               <div className="page-grid" style={{ gap: 12, marginTop: 16 }}>
                 {cartItems.map((item) => (
-                  <div key={item.id} className="order-item">
+                  <div key={cartItemKey(item)} className="order-item">
                     <div className="order-thumb">
                       <img src={item.image} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     </div>
                     <div>
                       <strong style={{ color: '#222' }}>{item.name}</strong>
+                      {optionSummary(item.selectedOptions) && <p className="supporting-text">{optionSummary(item.selectedOptions)}</p>}
                       <div className="supporting-text">Qty {item.quantity}</div>
                     </div>
                     <strong>GHc{(item.price * item.quantity).toFixed(2)}</strong>

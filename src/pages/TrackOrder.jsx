@@ -1,3 +1,4 @@
+import { optionSummary } from '../lib/productOptions'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Check, CircleHelp, Mail, MapPin, Package, Search, Truck } from 'lucide-react'
@@ -375,6 +376,7 @@ const TrackOrder = () => {
                       </button>
                       <div>
                         <strong style={{ color: '#222' }}>{item.name}</strong>
+                      {optionSummary(item.selectedOptions) && <p className="supporting-text">{optionSummary(item.selectedOptions)}</p>}
                         <div className="supporting-text">Quantity: {item.quantity}</div>
                         <div className="supporting-text">Unit price: GHc{Number(item.price || 0).toFixed(2)}</div>
                       </div>

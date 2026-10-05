@@ -38,7 +38,7 @@ const normalize = (p) => ({
   colors: Array.isArray(p.colors) ? p.colors : [],
   sold: p.orders_count ? `${p.orders_count} sold` : '',
   categories: extractProductCategories(p),
-  specs: {},
+  specs: p.specs && typeof p.specs === 'object' && !Array.isArray(p.specs) ? p.specs : {},
 })
 
 export const ProductProvider = ({ children }) => {

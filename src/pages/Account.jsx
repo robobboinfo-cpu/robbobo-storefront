@@ -1,3 +1,4 @@
+import { optionSummary } from '../lib/productOptions'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ChevronDown, LogOut, PackageSearch, RotateCcw, ShieldCheck, Truck, User } from 'lucide-react'
@@ -249,6 +250,7 @@ const Account = () => {
                           </div>
                           <div>
                             <strong style={{ color: '#222' }}>{item.name}</strong>
+                      {optionSummary(item.selectedOptions) && <p className="supporting-text">{optionSummary(item.selectedOptions)}</p>}
                             <div className="supporting-text">Qty {item.quantity}</div>
                           </div>
                           <strong>GHc{Number(item.subtotal || item.price * item.quantity).toFixed(2)}</strong>
