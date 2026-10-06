@@ -1,5 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
+import process from 'node:process'
 import handler from '../api/paystack/initialize.js'
 
 test('payment initialization validates current choices and preserves them in payment metadata', async () => {
@@ -13,7 +14,9 @@ test('payment initialization validates current choices and preserves them in pay
     const url = String(input?.url || input)
     if (url.includes('/rest/v1/products')) return new Response(JSON.stringify([{ id: 'shirt', name: 'Shirt', price: 100, status: 'active', specs: { __options: { enabled: true, groups: [{ name: 'Size', values: ['M', 'L'] }] } } }]), { headers: { 'Content-Type': 'application/json' } })
     if (url === 'https://api.paystack.co/transaction/initialize') {
-      payments.push(JSON.parse(init.body))
+      const payment = JSON.parse(init.body)
+      assert.equal(typeof payment.metadata, 'string', 'Paystack metadata must be a JSON string')
+      payments.push(payment)
       return new Response(JSON.stringify({ status: true, data: { access_code: 'mock' } }), { headers: { 'Content-Type': 'application/json' } })
     }
     throw new Error(`Unexpected request: ${url}`)
@@ -29,7 +32,7 @@ test('payment initialization validates current choices and preserves them in pay
     assert.equal(payments.length, 0)
     const items = [{ id: 'shirt', quantity: 1, selectedOptions: { Size: 'M' } }, { id: 'shirt', quantity: 2, selectedOptions: { Size: 'L' } }]
     assert.equal((await run(items)).code, 200)
-    assert.deepEqual(payments[0].metadata.cart_items, items)
+    assert.deepEqual(JSON.parse(payments[0].metadata).cart_items, items)
     assert.equal(payments[0].amount, 35000)
   } finally {
     globalThis.fetch = originalFetch

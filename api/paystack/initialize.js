@@ -59,7 +59,8 @@ export default async function handler(request, response) {
       currency: 'GHS',
       reference,
       callback_url: `${origin}/checkout`,
-      metadata: { order_total: total, cart_items: items.map(({ id, quantity, selectedOptions }) => ({ id, quantity, selectedOptions })) },
+      // Paystack expects stringified metadata, including nested product choices.
+      metadata: JSON.stringify({ order_total: total, cart_items: items.map(({ id, quantity, selectedOptions }) => ({ id, quantity, selectedOptions })) }),
     }),
   })
   const result = await paystackResponse.json()
