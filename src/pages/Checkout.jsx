@@ -1,5 +1,6 @@
+import { orderTotals } from '../lib/orderTotals'
 import { cartItemKey, optionSummary } from '../lib/productOptions'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { useCallback, useEffect, useRef } from 'react'
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 import PaystackPop from '@paystack/inline-js'
@@ -38,9 +39,7 @@ const Checkout = () => {
   const [verifyingPayment, setVerifyingPayment] = useState(isPaymentReturn)
   const verificationStarted = useRef(false)
 
-  const shipping = useMemo(() => (cartTotal >= 500 ? 0 : 35), [cartTotal])
-  const tax = useMemo(() => Number((cartTotal * 0.05).toFixed(2)), [cartTotal])
-  const total = useMemo(() => Number((cartTotal + shipping + tax).toFixed(2)), [cartTotal, shipping, tax])
+  const { shipping, tax, total } = orderTotals(cartTotal)
 
   const completePaystackOrder = useCallback(async (reference, pendingRaw) => {
     if (!currentUser) throw new Error('Please sign in to complete your order.')
@@ -315,8 +314,6 @@ const Checkout = () => {
               </div>
               <div className="summary-lines" style={{ marginTop: 18 }}>
                 <div className="summary-line"><span>Subtotal</span><strong>GHc{cartTotal.toFixed(2)}</strong></div>
-                <div className="summary-line"><span>Shipping</span><strong>{shipping === 0 ? 'Free' : `GHc${shipping.toFixed(2)}`}</strong></div>
-                <div className="summary-line"><span>Tax (5%)</span><strong>GHc{tax.toFixed(2)}</strong></div>
               </div>
               <div className="summary-total">
                 <span style={{ fontWeight: 700, color: '#222' }}>Total</span>

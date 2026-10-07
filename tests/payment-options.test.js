@@ -33,7 +33,11 @@ test('payment initialization validates current choices and preserves them in pay
     const items = [{ id: 'shirt', quantity: 1, selectedOptions: { Size: 'M' } }, { id: 'shirt', quantity: 2, selectedOptions: { Size: 'L' } }]
     assert.equal((await run(items)).code, 200)
     assert.deepEqual(JSON.parse(payments[0].metadata).cart_items, items)
-    assert.equal(payments[0].amount, 35000)
+    assert.equal(payments[0].amount, 30000)
+    assert.equal(JSON.parse(payments[0].metadata).order_total, 300)
+    // Above the former free-shipping/discount threshold, charge only products too.
+    assert.equal((await run([{ id: 'shirt', quantity: 6, selectedOptions: { Size: 'M' }, price: 1 }])).code, 200)
+    assert.equal(payments[1].amount, 60000)
   } finally {
     globalThis.fetch = originalFetch
     for (const name of ['PAYSTACK_SECRET_KEY', 'VITE_SUPABASE_URL', 'VITE_SUPABASE_ANON_KEY']) {

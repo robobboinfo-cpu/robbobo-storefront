@@ -1,3 +1,4 @@
+import { orderTotals } from '../lib/orderTotals'
 import { cartItemKey, optionSummary } from '../lib/productOptions'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -24,10 +25,7 @@ const Cart = () => {
     )
   }
 
-  const discount = cartTotal >= 500 ? cartTotal * 0.08 : 0
-  const shipping = cartTotal >= 500 ? 0 : 35
-  const tax = (cartTotal - discount) * 0.05
-  const total = cartTotal - discount + shipping + tax
+  const { total } = orderTotals(cartTotal)
 
   return (
     <div className="page-section">
@@ -87,9 +85,6 @@ const Cart = () => {
               <h2 style={{ margin: 0, color: '#222' }}>Order summary</h2>
               <div className="summary-lines" style={{ marginTop: 18 }}>
                 <div className="summary-line"><span>Subtotal</span><strong>GHc{cartTotal.toFixed(2)}</strong></div>
-                <div className="summary-line"><span>Discount</span><strong>-GHc{discount.toFixed(2)}</strong></div>
-                <div className="summary-line"><span>Shipping</span><strong>{shipping === 0 ? 'Free' : `GHc${shipping.toFixed(2)}`}</strong></div>
-                <div className="summary-line"><span>Tax (5%)</span><strong>GHc{tax.toFixed(2)}</strong></div>
               </div>
               <div className="summary-total">
                 <span style={{ fontWeight: 700, color: '#222' }}>Total</span>

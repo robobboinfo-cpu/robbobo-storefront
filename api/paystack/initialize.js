@@ -1,3 +1,4 @@
+import { orderTotals } from '../../src/lib/orderTotals.js'
 import allProducts from '../../src/data/products.js'
 import process from 'node:process'
 import { createClient } from '@supabase/supabase-js'
@@ -42,9 +43,7 @@ export default async function handler(request, response) {
   if (items.length !== requestedItems.length) return json(response, 400, { error: 'One or more products are invalid.' })
 
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
-  const shipping = subtotal >= 500 ? 0 : 35
-  const tax = Number((subtotal * 0.05).toFixed(2))
-  const total = Number((subtotal + shipping + tax).toFixed(2))
+  const { total } = orderTotals(subtotal)
   const amount = Math.round(total * 100)
   const reference = `RBB-${Date.now()}-${crypto.randomUUID().slice(0, 8)}`
   const protocol = request.headers['x-forwarded-proto'] || (request.headers.host?.includes('localhost') ? 'http' : 'https')

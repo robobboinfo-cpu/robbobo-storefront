@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
-import { allProducts as localProducts } from '../data/products'
+import { useLocation } from 'react-router-dom'
 import { extractProductCategories } from '../lib/productCategories'
 
 const ProductContext = createContext()
@@ -43,6 +43,7 @@ const normalize = (p) => ({
 })
 
 export const ProductProvider = ({ children }) => {
+  const { pathname } = useLocation()
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -60,10 +61,10 @@ export const ProductProvider = ({ children }) => {
         error = caughtError
       }
 
-      if (error || !(data || []).length) {
+      if (error) {
         if (!isMounted) return
         setError(error?.message || null)
-        setProducts(localProducts)
+        // Keep the last live catalog; never substitute old bundled products.
       } else {
         if (!isMounted) return
         setError(null)
@@ -86,16 +87,22 @@ export const ProductProvider = ({ children }) => {
       if (document.visibilityState === 'visible') fetchProducts()
     }
 
+    const timer = window.setInterval(handleVisibility, 30000)
+    window.addEventListener('pageshow', handleFocus)
+    window.addEventListener('online', handleFocus)
     window.addEventListener('focus', handleFocus)
     document.addEventListener('visibilitychange', handleVisibility)
 
     return () => {
       isMounted = false
+      window.clearInterval(timer)
+      window.removeEventListener('pageshow', handleFocus)
+      window.removeEventListener('online', handleFocus)
       window.removeEventListener('focus', handleFocus)
       document.removeEventListener('visibilitychange', handleVisibility)
       supabase.removeChannel(channel)
     }
-  }, [])
+  }, [pathname])
 
   const getProductById = (id) =>
     products.find(p => String(p.id) === String(id)) || null
