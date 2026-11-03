@@ -3,20 +3,26 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { Check, Heart, RotateCcw, ShieldCheck, ShoppingBag, Truck } from 'lucide-react'
 import { CartContext } from '../context/CartContext'
 import { useProducts } from '../context/ProductContext'
+import ProductDescription from '../components/ProductDescription'
+import { descriptionPreview } from '../lib/productDescription'
+import { getProductOptions, validateProductSelection } from '../lib/productOptions'
 
 const hiddenSpecs = new Set(['stock', 'stock_count', 'inventory', 'quantity', 'qty', 'remaining', 'available_stock'])
-const defaultSizes = ['S', 'M', 'L', 'XL', 'XXL']
 
 const ProductDetail = () => {
   const { id } = useParams()
+  return <ProductDetailContent key={id} id={id} />
+}
+
+const ProductDetailContent = ({ id }) => {
   const navigate = useNavigate()
   const { addToCart, notifyCart } = useContext(CartContext)
   const { products, getProductById, loading } = useProducts()
   const product = getProductById(id)
   const [quantity, setQuantity] = useState(1)
   const [activeImage, setActiveImage] = useState(0)
-  const [selectedColor, setSelectedColor] = useState(0)
-  const [selectedSize, setSelectedSize] = useState('M')
+  const [selectedOptions, setSelectedOptions] = useState({})
+  const [optionError, setOptionError] = useState('')
   const [activeTab, setActiveTab] = useState('Details')
   const [wishlisted, setWishlisted] = useState(false)
   const selectQuantity = (nextQuantity) => {
@@ -40,9 +46,13 @@ const ProductDetail = () => {
 
   const discount = product.oldPrice ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100) : null
   const images = product.images?.length ? product.images : [product.image]
-  const colors = product.colors || []
-  const specs = Object.entries(product.specs || {}).filter(([key]) => !hiddenSpecs.has(String(key).toLowerCase()))
-  const sizes = product.specs?.sizes ? String(product.specs.sizes).split(/[,/-]/).map((size) => size.trim()).filter(Boolean) : defaultSizes
+  const options = getProductOptions(product)
+  const specs = Object.entries(product.specs || {}).filter(([key, value]) => !key.startsWith('__') && !hiddenSpecs.has(String(key).toLowerCase()) && ['string', 'number'].includes(typeof value))
+  const addSelectedProduct = () => {
+    const error = validateProductSelection(product, selectedOptions)
+    setOptionError(error)
+    if (!error) addToCart(product, quantity, selectedOptions)
+  }
   const tabs = ['Details', 'Materials', 'Size & Fit', 'Shipping & Returns']
   const tabCopy = {
     Details: product.description,
@@ -80,28 +90,22 @@ const ProductDetail = () => {
             {discount ? <span>{discount}% OFF</span> : null}
           </div>
           <div className="pdp-lead">
-            <p className="product-description-copy pdp-description-preview">{product.description}</p>
+            <p className="product-description-copy pdp-description-preview">{descriptionPreview(product.description)}</p>
             {product.description && <a className="pdp-description-link" href="#product-details" onClick={() => setActiveTab('Details')}>Read full description</a>}
           </div>
 
-          {colors.length > 0 && <div className="pdp-option-block">
-            <div className="pdp-option-heading"><strong>Color</strong><span>Option {selectedColor + 1}</span></div>
-            <div className="pdp-swatches">{colors.map((color, index) => (
-              <button key={`${color}-${index}`} type="button" className={selectedColor === index ? 'active' : ''} style={{ backgroundColor: color }} aria-label={`Select color ${index + 1}`} onClick={() => setSelectedColor(index)} />
-            ))}</div>
-          </div>}
-
-          {product.category === 'Fashion' && <div className="pdp-option-block">
-            <div className="pdp-option-heading"><strong>Size</strong><button type="button">Size guide</button></div>
-            <div className="pdp-sizes">{sizes.map((size) => <button key={size} type="button" className={selectedSize === size ? 'active' : ''} onClick={() => setSelectedSize(size)}>{size}</button>)}</div>
-          </div>}
+          {options.map((group) => <fieldset key={group.name} className="pdp-option-block" style={{ border: 0, padding: 0 }}>
+            <legend className="pdp-option-heading"><strong>{group.name}</strong></legend>
+            <div className="pdp-sizes">{group.values.map((value) => <button key={value} type="button" aria-pressed={selectedOptions[group.name] === value} className={selectedOptions[group.name] === value ? 'active' : ''} onClick={() => { setSelectedOptions((current) => ({ ...current, [group.name]: value })); setOptionError('') }}>{value}</button>)}</div>
+          </fieldset>)}
+          {optionError && <p role="alert" style={{ color: '#b42318' }}>{optionError}</p>}
 
           <div className="pdp-quantity"><span>Quantity</span><div className="pdp-qty-control">
             <button type="button" aria-label="Decrease quantity" disabled={quantity === 1} onClick={() => selectQuantity(quantity - 1)}>−</button><strong>{quantity}</strong><button type="button" aria-label="Increase quantity" onClick={() => selectQuantity(quantity + 1)}>+</button>
           </div></div>
 
           <div className="pdp-actions">
-            <button type="button" className="pdp-add-button" onClick={() => addToCart(product, quantity)}><ShoppingBag size={18} /> Add to cart</button>
+            <button type="button" className="pdp-add-button" onClick={addSelectedProduct}><ShoppingBag size={18} /> Add to cart</button>
             <button type="button" className={`pdp-wishlist ${wishlisted ? 'active' : ''}`} aria-label="Add to wishlist" onClick={() => setWishlisted((value) => !value)}><Heart size={20} fill={wishlisted ? 'currentColor' : 'none'} /></button>
           </div>
           <div className="pdp-benefits">
@@ -115,10 +119,9 @@ const ProductDetail = () => {
       <section className="pdp-details" id="product-details">
         <div className="pdp-detail-copy">
           <div className="pdp-tabs" role="tablist">{tabs.map((tab) => <button key={tab} type="button" className={activeTab === tab ? 'active' : ''} onClick={() => setActiveTab(tab)}>{tab}</button>)}</div>
-          <p className="product-description-copy">{tabCopy[activeTab]}</p>
+          <div className="product-description-copy"><ProductDescription value={tabCopy[activeTab]} /></div>
           {activeTab === 'Details' && specs.length > 0 && <ul className="pdp-feature-list">{specs.slice(0, 6).map(([key, value]) => <li key={key}><Check size={15} /><span><strong>{key.replace(/_/g, ' ')}:</strong> {value}</span></li>)}</ul>}
         </div>
-        <div className="pdp-detail-image"><img src={images[1] || product.image} alt={`${product.name} detail`} /></div>
       </section>
 
       {related.length > 0 && <section className="pdp-related">

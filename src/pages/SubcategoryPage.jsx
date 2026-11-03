@@ -34,7 +34,7 @@ const SubcategoryPage = () => {
       key={`${category}/${subcategory}`}
       loading={loading}
       title={decodedSubcategory}
-      subtitle={`All ${decodedSubcategory} items from ${decodedCategory}, presented in an Alibaba-style product gallery.`}
+      subtitle={`All ${decodedSubcategory} items from ${decodedCategory}.`}
       products={filtered}
     />
   )

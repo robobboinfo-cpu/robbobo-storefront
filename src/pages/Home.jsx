@@ -8,6 +8,7 @@ import { useProducts } from '../context/ProductContext'
 import { productMatchesCategory } from '../lib/productCategories'
 import { supabase } from '../lib/supabase'
 import { brandText } from '../lib/brandText'
+import { newestProductsFirst } from '../lib/productSorting'
 
 const categoryImageFallback = 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=900&h=700&fit=crop&q=85'
 
@@ -72,7 +73,7 @@ const Home = () => {
 
   const safeActiveSlide = heroSlides.length ? activeSlide % heroSlides.length : 0
   const active = heroSlides[safeActiveSlide]
-  const newArrivals = useMemo(() => [...products].reverse().slice(0, 6), [products])
+  const newArrivals = useMemo(() => newestProductsFirst(products).slice(0, 6), [products])
   const discoveryProducts = useMemo(() => products.filter((product) => selectedDepartment === 'All' || productMatchesCategory(product, selectedDepartment)).slice(0, 6), [products, selectedDepartment])
   const deals = useMemo(() => products.filter((product) => product.oldPrice > product.price).sort((a, b) => (1 - b.price / b.oldPrice) - (1 - a.price / a.oldPrice)).slice(0, 3), [products])
   const productShelves = useMemo(() => {
@@ -137,7 +138,7 @@ const Home = () => {
           </div>
         </section>
 
-        <section className="storefront-section">
+        <section className="storefront-section storefront-new-arrivals">
           <div className="storefront-heading"><h2>New Arrivals</h2><button type="button" onClick={() => navigate('/products?sort=newest')}>View all new arrivals <ArrowRight size={15} /></button></div>
           <div className="products-grid">
             {newArrivals.map(renderProduct)}

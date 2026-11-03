@@ -1,6 +1,8 @@
+import { orderTotals } from '../../src/lib/orderTotals.js'
 import allProducts from '../../src/data/products.js'
 import process from 'node:process'
 import { createClient } from '@supabase/supabase-js'
+import { validateProductSelection } from '../../src/lib/productOptions.js'
 
 const json = (response, status, body) => response.status(status).json(body)
 
@@ -20,24 +22,28 @@ export default async function handler(request, response) {
       const supabase = createClient(supabaseUrl, supabaseAnonKey, { auth: { persistSession: false } })
       const { data: remoteProducts } = await supabase
         .from('products')
-        .select('id,name,price,status')
+        .select('id,name,price,status,specs')
         .eq('status', 'active')
       for (const product of remoteProducts || []) catalog.set(String(product.id), product)
     } catch (error) {
       console.warn('[Paystack] Remote product validation unavailable; using bundled catalog.', error?.message)
     }
   }
+  for (const item of requestedItems) {
+    const product = catalog.get(String(item.id))
+    if (!product) return json(response, 400, { error: 'One or more products are invalid.' })
+    const selectionError = validateProductSelection(product, item.selectedOptions || {})
+    if (selectionError) return json(response, 400, { error: selectionError })
+  }
   const items = requestedItems.map((item) => {
     const product = catalog.get(String(item.id))
     const quantity = Math.max(1, Math.min(99, Number.parseInt(item.quantity, 10) || 1))
-    return product ? { id: product.id, name: product.name, price: Number(product.price), quantity } : null
+    return product ? { id: product.id, name: product.name, price: Number(product.price), quantity, selectedOptions: item.selectedOptions || {} } : null
   }).filter(Boolean)
   if (items.length !== requestedItems.length) return json(response, 400, { error: 'One or more products are invalid.' })
 
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
-  const shipping = subtotal >= 500 ? 0 : 35
-  const tax = Number((subtotal * 0.05).toFixed(2))
-  const total = Number((subtotal + shipping + tax).toFixed(2))
+  const { total } = orderTotals(subtotal)
   const amount = Math.round(total * 100)
   const reference = `RBB-${Date.now()}-${crypto.randomUUID().slice(0, 8)}`
   const protocol = request.headers['x-forwarded-proto'] || (request.headers.host?.includes('localhost') ? 'http' : 'https')
@@ -52,7 +58,8 @@ export default async function handler(request, response) {
       currency: 'GHS',
       reference,
       callback_url: `${origin}/checkout`,
-      metadata: { order_total: total, cart_items: items.map(({ id, quantity }) => ({ id, quantity })) },
+      // Paystack expects stringified metadata, including nested product choices.
+      metadata: JSON.stringify({ order_total: total, cart_items: items.map(({ id, quantity, selectedOptions }) => ({ id, quantity, selectedOptions })) }),
     }),
   })
   const result = await paystackResponse.json()

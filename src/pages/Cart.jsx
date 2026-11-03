@@ -1,3 +1,5 @@
+import { orderTotals } from '../lib/orderTotals'
+import { cartItemKey, optionSummary } from '../lib/productOptions'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Minus, Plus, ShieldCheck, ShoppingCart, Trash2, Truck } from 'lucide-react'
@@ -23,10 +25,7 @@ const Cart = () => {
     )
   }
 
-  const discount = cartTotal >= 500 ? cartTotal * 0.08 : 0
-  const shipping = cartTotal >= 500 ? 0 : 35
-  const tax = (cartTotal - discount) * 0.05
-  const total = cartTotal - discount + shipping + tax
+  const { total } = orderTotals(cartTotal)
 
   return (
     <div className="page-section">
@@ -42,7 +41,7 @@ const Cart = () => {
         <section className="cart-layout">
           <div className="page-card" style={{ overflow: 'hidden' }}>
             {cartItems.map((item) => (
-              <div key={item.id} className="cart-item">
+              <div key={cartItemKey(item)} className="cart-item">
                 <div className="cart-thumb">
                   <img src={item.image} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 </div>
@@ -50,13 +49,14 @@ const Cart = () => {
                   <button type="button" onClick={() => navigate(`/product/${item.id}`)} style={{ border: 'none', background: 'none', padding: 0, textAlign: 'left', fontSize: '1rem', fontWeight: 700, color: '#222' }}>
                     {item.name}
                   </button>
+                  {optionSummary(item.selectedOptions) && <p className="supporting-text">{optionSummary(item.selectedOptions)}</p>}
                   <div className="inline-stats">
                     <span className="supporting-text">SKU #{item.id}</span>
                   </div>
                   <div className="qty-stepper">
-                    <button type="button" aria-label={`Decrease quantity of ${item.name}`} disabled={item.quantity <= 1} onClick={() => updateQuantity(item.id, item.quantity - 1)}><Minus size={14} /></button>
+                    <button type="button" aria-label={`Decrease quantity of ${item.name}`} disabled={item.quantity <= 1} onClick={() => updateQuantity(cartItemKey(item), item.quantity - 1)}><Minus size={14} /></button>
                     <strong>{item.quantity}</strong>
-                    <button type="button" aria-label={`Increase quantity of ${item.name}`} onClick={() => updateQuantity(item.id, item.quantity + 1)}><Plus size={14} /></button>
+                    <button type="button" aria-label={`Increase quantity of ${item.name}`} onClick={() => updateQuantity(cartItemKey(item), item.quantity + 1)}><Plus size={14} /></button>
                   </div>
                 </div>
                 <div className="page-grid" style={{ gap: 10, justifyItems: 'end' }}>
@@ -64,7 +64,7 @@ const Cart = () => {
                     <div className="price-main">GHc{(item.price * item.quantity).toFixed(2)}</div>
                     <div className="supporting-text">GHc{item.price.toFixed(2)} each</div>
                   </div>
-                  <button type="button" className="btn-ghost" onClick={() => removeFromCart(item.id)}>
+                  <button type="button" className="btn-ghost" onClick={() => removeFromCart(cartItemKey(item))}>
                     <Trash2 size={14} /> Remove
                   </button>
                 </div>
@@ -85,9 +85,6 @@ const Cart = () => {
               <h2 style={{ margin: 0, color: '#222' }}>Order summary</h2>
               <div className="summary-lines" style={{ marginTop: 18 }}>
                 <div className="summary-line"><span>Subtotal</span><strong>GHc{cartTotal.toFixed(2)}</strong></div>
-                <div className="summary-line"><span>Discount</span><strong>-GHc{discount.toFixed(2)}</strong></div>
-                <div className="summary-line"><span>Shipping</span><strong>{shipping === 0 ? 'Free' : `GHc${shipping.toFixed(2)}`}</strong></div>
-                <div className="summary-line"><span>Tax (5%)</span><strong>GHc{tax.toFixed(2)}</strong></div>
               </div>
               <div className="summary-total">
                 <span style={{ fontWeight: 700, color: '#222' }}>Total</span>
