@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react'
 import ProductCard from '../components/ProductCard'
-import InfiniteProductGrid from '../components/InfiniteProductGrid'
+import HomeProductGrid from '../components/HomeProductGrid'
 import BrandSlideshow from '../components/BrandSlideshow'
 import { useSiteContent } from '../context/SiteContentContext'
 import { useProducts } from '../context/ProductContext'
@@ -10,6 +10,7 @@ import { productMatchesCategory } from '../lib/productCategories'
 import { supabase } from '../lib/supabase'
 import { brandText } from '../lib/brandText'
 import { newestProductsFirst } from '../lib/productSorting'
+import { randomizeHomeProducts } from '../lib/homeProductSelection'
 
 const categoryImageFallback = 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=900&h=700&fit=crop&q=85'
 
@@ -44,6 +45,8 @@ const Home = () => {
   const categories = useMemo(() => siteContent.categories || [], [siteContent.categories])
   const homeContent = siteContent.homeContent
   const [selectedDepartment, setSelectedDepartment] = useState('All')
+  const [selectionSeed] = useState(() => Math.floor(Math.random() * 4294967296))
+  const randomProducts = useMemo(() => randomizeHomeProducts(products, selectionSeed), [products, selectionSeed])
   const [activeSlide, setActiveSlide] = useState(0)
   const [heroSlides, setHeroSlides] = useState(homeContent.fallbackSlides)
 
@@ -75,8 +78,11 @@ const Home = () => {
   const safeActiveSlide = heroSlides.length ? activeSlide % heroSlides.length : 0
   const active = heroSlides[safeActiveSlide]
   const newArrivals = useMemo(() => newestProductsFirst(products).slice(0, 24), [products])
-  const discoveryProducts = useMemo(() => products.filter((product) => selectedDepartment === 'All' || productMatchesCategory(product, selectedDepartment)).slice(0, 36), [products, selectedDepartment])
   const deals = useMemo(() => products.filter((product) => product.oldPrice > product.price).sort((a, b) => (1 - b.price / b.oldPrice) - (1 - a.price / a.oldPrice)).slice(0, 12), [products])
+  const discoveryProducts = useMemo(() => {
+    const shown = new Set([...newArrivals, ...deals].map((product) => product.id))
+    return randomProducts.filter((product) => !shown.has(product.id) && (selectedDepartment === 'All' || productMatchesCategory(product, selectedDepartment))).slice(0, 36)
+  }, [randomProducts, newArrivals, deals, selectedDepartment])
   const productShelves = useMemo(() => {
     const shown = new Set([...newArrivals, ...discoveryProducts, ...deals].map((product) => product.id))
     const sections = [
@@ -90,12 +96,14 @@ const Home = () => {
     ]
 
     return sections.map((section) => {
-      const remaining = products.filter((product) => !shown.has(product.id) && (!section.category || productMatchesCategory(product, section.category)))
+      const remaining = randomProducts.filter((product) => !shown.has(product.id) && (!section.category || productMatchesCategory(product, section.category)))
       const items = section.category ? remaining.slice(0, 24) : remaining
       items.forEach((product) => shown.add(product.id))
       return { ...section, items, href: section.category ? `/category/${encodeURIComponent(section.category)}` : '/products' }
     }).filter((section) => section.items.length)
-  }, [products, newArrivals, discoveryProducts, deals])
+  }, [randomProducts, newArrivals, discoveryProducts, deals])
+  const featuredProductCount = newArrivals.length + discoveryProducts.length + deals.length
+    + productShelves.filter((section) => section.category).reduce((count, section) => count + section.items.length, 0)
   const collections = [
     { category: 'Home & Living', title: 'Small changes. Fresh spaces.', copy: 'Make room for slow mornings, cosy corners and a little everyday order.', action: 'Refresh your space', tone: 'home' },
     { category: 'Electronics', title: 'A smarter everyday setup.', copy: 'Find your next listening companion, desk upgrade or go-to gadget.', action: 'Explore the tech edit', tone: 'tech' },
@@ -197,7 +205,7 @@ const Home = () => {
             </div>
             {section.category
               ? <div className="products-grid">{section.items.map(renderProduct)}</div>
-              : <InfiniteProductGrid products={section.items} />}
+              : <HomeProductGrid products={section.items} initialCount={Math.max(0, 450 - featuredProductCount)} maxCount={Math.max(0, 750 - featuredProductCount)} />}
           </section>
         ))}
       </div>

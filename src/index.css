@@ -5662,6 +5662,10 @@ body {
   }
 }
 .catalog-scroll-sentinel { height: 1px; }
+.home-see-more { display: flex; justify-content: center; margin-top: 28px; }
+.home-see-more button { border: 1px solid #db7c26; border-radius: 8px; background: #fff; color: #8a4209; padding: 13px 32px; font: inherit; font-weight: 700; cursor: pointer; }
+.home-see-more button:hover { background: #fff5eb; }
+.home-see-more button:focus-visible { outline: 3px solid #db7c26; outline-offset: 4px; }
 .cart-confirmation-region {
   position: fixed;
   inset: 0 0 auto;
