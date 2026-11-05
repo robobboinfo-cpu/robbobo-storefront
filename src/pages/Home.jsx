@@ -73,11 +73,11 @@ const Home = () => {
 
   const safeActiveSlide = heroSlides.length ? activeSlide % heroSlides.length : 0
   const active = heroSlides[safeActiveSlide]
-  const newArrivals = useMemo(() => newestProductsFirst(products).slice(0, 6), [products])
-  const discoveryProducts = useMemo(() => products.filter((product) => selectedDepartment === 'All' || productMatchesCategory(product, selectedDepartment)).slice(0, 6), [products, selectedDepartment])
-  const deals = useMemo(() => products.filter((product) => product.oldPrice > product.price).sort((a, b) => (1 - b.price / b.oldPrice) - (1 - a.price / a.oldPrice)).slice(0, 3), [products])
+  const newArrivals = useMemo(() => newestProductsFirst(products).slice(0, 12), [products])
+  const discoveryProducts = useMemo(() => products.filter((product) => selectedDepartment === 'All' || productMatchesCategory(product, selectedDepartment)).slice(0, 18), [products, selectedDepartment])
+  const deals = useMemo(() => products.filter((product) => product.oldPrice > product.price).sort((a, b) => (1 - b.price / b.oldPrice) - (1 - a.price / a.oldPrice)).slice(0, 6), [products])
   const productShelves = useMemo(() => {
-    const shown = new Set([...newArrivals, ...products.slice(0, 6), ...deals].map((product) => product.id))
+    const shown = new Set([...newArrivals, ...discoveryProducts, ...deals].map((product) => product.id))
     const sections = [
       { title: 'Electronics for every day', category: 'Electronics' },
       { title: 'Home essentials', category: 'Home & Living' },
@@ -86,11 +86,11 @@ const Home = () => {
     ]
 
     return sections.map((section) => {
-      const items = products.filter((product) => !shown.has(product.id) && (!section.category || productMatchesCategory(product, section.category))).slice(0, section.category ? 6 : 12)
+      const items = products.filter((product) => !shown.has(product.id) && (!section.category || productMatchesCategory(product, section.category))).slice(0, section.category ? 12 : 24)
       items.forEach((product) => shown.add(product.id))
       return { ...section, items, href: section.category ? `/category/${encodeURIComponent(section.category)}` : '/products' }
     }).filter((section) => section.items.length)
-  }, [products, newArrivals, deals])
+  }, [products, newArrivals, discoveryProducts, deals])
   const collections = [
     { category: 'Home & Living', title: 'Small changes. Fresh spaces.', copy: 'Make room for slow mornings, cosy corners and a little everyday order.', action: 'Refresh your space', tone: 'home' },
     { category: 'Electronics', title: 'A smarter everyday setup.', copy: 'Find your next listening companion, desk upgrade or go-to gadget.', action: 'Explore the tech edit', tone: 'tech' },
