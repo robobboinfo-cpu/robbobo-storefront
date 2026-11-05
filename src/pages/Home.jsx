@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react'
 import ProductCard from '../components/ProductCard'
+import InfiniteProductGrid from '../components/InfiniteProductGrid'
 import BrandSlideshow from '../components/BrandSlideshow'
 import { useSiteContent } from '../context/SiteContentContext'
 import { useProducts } from '../context/ProductContext'
@@ -73,20 +74,24 @@ const Home = () => {
 
   const safeActiveSlide = heroSlides.length ? activeSlide % heroSlides.length : 0
   const active = heroSlides[safeActiveSlide]
-  const newArrivals = useMemo(() => newestProductsFirst(products).slice(0, 12), [products])
-  const discoveryProducts = useMemo(() => products.filter((product) => selectedDepartment === 'All' || productMatchesCategory(product, selectedDepartment)).slice(0, 18), [products, selectedDepartment])
-  const deals = useMemo(() => products.filter((product) => product.oldPrice > product.price).sort((a, b) => (1 - b.price / b.oldPrice) - (1 - a.price / a.oldPrice)).slice(0, 6), [products])
+  const newArrivals = useMemo(() => newestProductsFirst(products).slice(0, 24), [products])
+  const discoveryProducts = useMemo(() => products.filter((product) => selectedDepartment === 'All' || productMatchesCategory(product, selectedDepartment)).slice(0, 36), [products, selectedDepartment])
+  const deals = useMemo(() => products.filter((product) => product.oldPrice > product.price).sort((a, b) => (1 - b.price / b.oldPrice) - (1 - a.price / a.oldPrice)).slice(0, 12), [products])
   const productShelves = useMemo(() => {
     const shown = new Set([...newArrivals, ...discoveryProducts, ...deals].map((product) => product.id))
     const sections = [
       { title: 'Electronics for every day', category: 'Electronics' },
       { title: 'Home essentials', category: 'Home & Living' },
       { title: 'Refresh your wardrobe', category: 'Fashion' },
+      { title: 'Beauty favourites', category: 'Beauty' },
+      { title: 'Sports & fitness finds', category: 'Sports' },
+      { title: 'For the little ones', category: 'Kids & Toys' },
       { title: 'More to discover', category: null },
     ]
 
     return sections.map((section) => {
-      const items = products.filter((product) => !shown.has(product.id) && (!section.category || productMatchesCategory(product, section.category))).slice(0, section.category ? 12 : 24)
+      const remaining = products.filter((product) => !shown.has(product.id) && (!section.category || productMatchesCategory(product, section.category)))
+      const items = section.category ? remaining.slice(0, 24) : remaining
       items.forEach((product) => shown.add(product.id))
       return { ...section, items, href: section.category ? `/category/${encodeURIComponent(section.category)}` : '/products' }
     }).filter((section) => section.items.length)
@@ -190,7 +195,9 @@ const Home = () => {
               <h2>{section.title}</h2>
               <Link className="storefront-text-link" to={section.href}>View all <ArrowRight size={15} /></Link>
             </div>
-            <div className="products-grid">{section.items.map(renderProduct)}</div>
+            {section.category
+              ? <div className="products-grid">{section.items.map(renderProduct)}</div>
+              : <InfiniteProductGrid products={section.items} />}
           </section>
         ))}
       </div>

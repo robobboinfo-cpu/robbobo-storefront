@@ -11,12 +11,22 @@ export const useProducts = () => useContext(ProductContext)
 let catalogRequest = null
 const fetchCatalog = () => {
   if (!catalogRequest) {
-    catalogRequest = Promise.resolve(supabase
-      .from('products')
-      .select('*')
-      .eq('status', 'active')
-      .order('created_at', { ascending: false }))
-      .finally(() => { catalogRequest = null })
+    catalogRequest = (async () => {
+      const products = []
+      // Supabase caps each response at 1,000 rows; fetch the remaining catalog too.
+      for (let offset = 0; ; offset += 1000) {
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .eq('status', 'active')
+          .order('created_at', { ascending: false })
+          .order('id', { ascending: true })
+          .range(offset, offset + 999)
+        if (error) return { data: null, error }
+        products.push(...(data || []))
+        if ((data || []).length < 1000) return { data: products, error: null }
+      }
+    })().finally(() => { catalogRequest = null })
   }
   return catalogRequest
 }
